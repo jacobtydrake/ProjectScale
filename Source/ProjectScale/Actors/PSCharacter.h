@@ -33,6 +33,8 @@ public:
 	const bool GetIsHoldingMove() const { return bIsHoldingMove; }
 	UFUNCTION(BlueprintCallable)
 	const ELastMoveDirection GetLastMoveDirection() const {return LastMoveDirection;}
+	UFUNCTION(BlueprintCallable)
+	const bool GetIsAttacking() const { return bIsAttacking; }
 
 protected:
 	/* Overrides */
@@ -52,6 +54,9 @@ protected:
 	virtual void Move(const FInputActionValue& Value);
 	virtual void Attack();
 
+	void StartAttackAnim();
+	void StopAttackAnim();
+
 	/* Components */
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> CameraComp;
@@ -62,7 +67,12 @@ private:
 	FVector2D MovementVector{ 0.0f, 0.0f };
 
 	bool bIsHoldingMove{ false };
+	bool bIsAttacking{ false };
 
 	ELastMoveDirection LastMoveDirection { ELastMoveDirection::Left };
 
+	float LastAttackTime{ 0.0f };
+	float AttackCooldown{ 1.0f }; 
+
+	FTimerHandle AttackTimerHandle;
 };

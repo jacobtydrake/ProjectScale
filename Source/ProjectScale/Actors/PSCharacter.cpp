@@ -85,6 +85,31 @@ void APSCharacter::Move(const FInputActionValue& Value)
 
 void APSCharacter::Attack()
 {
-	UE_LOG(LogTemp, Display, TEXT("Attack executed"));
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	if (CurrentTime - LastAttackTime >= AttackCooldown)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Attack executed"));
+
+		LastAttackTime = CurrentTime;
+
+		StartAttackAnim();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Attack is on cooldown"));
+	}
+}
+
+void APSCharacter::StartAttackAnim()
+{
+	bIsAttacking = true;
+	const float AttackDuration = 0.35f;
+	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, AttackDuration, false);
+}
+
+void APSCharacter::StopAttackAnim()
+{
+	bIsAttacking = false;
 }
 
