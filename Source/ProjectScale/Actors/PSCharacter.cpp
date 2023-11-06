@@ -8,6 +8,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
+DEFINE_LOG_CATEGORY(PSCharacter);
+
 APSCharacter::APSCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,6 +24,9 @@ APSCharacter::APSCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	// TODO: allow to be set in editor via variable reference
+	ComboWindowDuration = FirstAttackAnimationLength + 0.35f;
 }
 
 void APSCharacter::BeginPlay()
@@ -76,40 +81,95 @@ void APSCharacter::Move(const FInputActionValue& Value)
 	if (MovementVector.X > 0)
 	{
 		LastMoveDirection = ELastMoveDirection::Right;
+		LastHorizontalMoveDirection = ELastHorizontalMoveDirection::Right;
 	}
 	else if (MovementVector.X < 0)
 	{
 		LastMoveDirection = ELastMoveDirection::Left;
+		LastHorizontalMoveDirection = ELastHorizontalMoveDirection::Left;
+	}
+	else if (MovementVector.Y > 0)
+	{
+		LastMoveDirection = ELastMoveDirection::Up;
+	}
+	else if (MovementVector.Y < 0)
+	{
+		LastMoveDirection = ELastMoveDirection::Down;
 	}
 }
 
 void APSCharacter::Attack()
 {
-	float CurrentTime = GetWorld()->GetTimeSeconds();
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
-	if (CurrentTime - LastAttackTime >= AttackCooldown)
+	if (CurrentTime - LastAttackTime < InputBufferTime)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Attack executed"));
+		UE_LOG(PSCharacter, Display, TEXT("Attack within input buffer time"));
+		return;
+	}
+	else if (CurrentTime - LastAttackEndTime < AttackCooldown)
+	{
+		UE_LOG(PSCharacter, Display, TEXT("Attack is on cooldown"));
+		return;
+	}
 
+	if (!bIsAttacking)
+	{
+		UE_LOG(PSCharacter, Display, TEXT("Attack executed"));
+
+		bIsAttacking = true;
 		LastAttackTime = CurrentTime;
 
-		StartAttackAnim();
+		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::OnFirstAttackAnimationEnd, FirstAttackAnimationLength, false);
+		GetWorldTimerManager().SetTimer(ComboWindowTimerHandle, this, &APSCharacter::StopAttackAnim, ComboWindowDuration, false);
+	}
+	else if (CurrentTime - LastAttackTime < ComboWindowDuration)
+	{
+		if (!bIsComboAttackQueued && !bIsComboAttackExecuting && CurrentTime - LastAttackTime > FirstAttackAnimationLength)
+		{
+			UE_LOG(PSCharacter, Display, TEXT("Combo Attack executed immediately"));
+
+			bIsComboAttackExecuting = true;
+
+			OnComboAttackRequested(LastMoveDirection);
+
+			GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+			GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
+
+			GetWorldTimerManager().ClearTimer(ComboWindowTimerHandle);
+		}
+		else if (!bIsComboAttackQueued)
+		{
+			UE_LOG(PSCharacter, Display, TEXT("Combo Attack queued"));
+			bIsComboAttackQueued = true;
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Attack is on cooldown"));
+		UE_LOG(PSCharacter, Display, TEXT("Attack is on cooldown"));
 	}
 }
 
-void APSCharacter::StartAttackAnim()
+void APSCharacter::OnFirstAttackAnimationEnd()
 {
-	bIsAttacking = true;
-	const float AttackDuration = 0.35f;
-	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, AttackDuration, false);
+	if (bIsComboAttackQueued)
+	{
+		UE_LOG(PSCharacter, Display, TEXT("Combo Attack executed"));
+
+		OnComboAttackRequested(LastMoveDirection);
+		bIsComboAttackQueued = false;
+		bIsComboAttackExecuting = true;
+
+		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
+		GetWorldTimerManager().ClearTimer(ComboWindowTimerHandle);
+	}
 }
 
 void APSCharacter::StopAttackAnim()
 {
+	bIsComboAttackExecuting = false;
 	bIsAttacking = false;
+	bIsComboAttackQueued = false;
+	LastAttackEndTime = GetWorld()->GetTimeSeconds();
 }
 
