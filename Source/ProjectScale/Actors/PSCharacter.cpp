@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h "
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -27,6 +28,7 @@ APSCharacter::APSCharacter()
 
 	// TODO: allow to be set in editor via variable reference
 	ComboWindowDuration = FirstAttackAnimationLength + 0.35f;
+
 }
 
 void APSCharacter::BeginPlay()
@@ -65,6 +67,9 @@ void APSCharacter::StopMove(const FInputActionValue& Value)
 
 void APSCharacter::Move(const FInputActionValue& Value)
 {
+	if (!bIsMovementAllowed) return;
+
+
 	bIsHoldingMove = true;
 	MovementVector = Value.Get<FVector2D>();
 
@@ -112,6 +117,11 @@ void APSCharacter::Attack()
 		UE_LOG(PSCharacter, Display, TEXT("Attack is on cooldown"));
 		return;
 	}
+	else if (bIsComboAttackQueued || bIsComboAttackExecuting)
+	{
+		UE_LOG(PSCharacter, Display, TEXT("Early return"));
+		return;
+	}
 
 	if (!bIsAttacking)
 	{
@@ -119,6 +129,10 @@ void APSCharacter::Attack()
 
 		bIsAttacking = true;
 		LastAttackTime = CurrentTime;
+
+		bIsMovementAllowed = false;
+
+		ApplyAttackBoost(AttackThrustPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::OnFirstAttackAnimationEnd, FirstAttackAnimationLength, false);
 		GetWorldTimerManager().SetTimer(ComboWindowTimerHandle, this, &APSCharacter::StopAttackAnim, ComboWindowDuration, false);
@@ -160,6 +174,8 @@ void APSCharacter::OnFirstAttackAnimationEnd()
 		bIsComboAttackQueued = false;
 		bIsComboAttackExecuting = true;
 
+		ApplyAttackBoost(ComboAttackThrustPower);
+
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
 		GetWorldTimerManager().ClearTimer(ComboWindowTimerHandle);
 	}
@@ -171,5 +187,35 @@ void APSCharacter::StopAttackAnim()
 	bIsAttacking = false;
 	bIsComboAttackQueued = false;
 	LastAttackEndTime = GetWorld()->GetTimeSeconds();
+
+	// Re-enable movement
+	bIsMovementAllowed = true;
 }
 
+void APSCharacter::ApplyAttackBoost(const float ThrustPower)
+{
+	FVector BoostDirection;
+
+	Jump();
+
+	switch (LastMoveDirection)
+	{
+	case ELastMoveDirection::Up:
+		BoostDirection = FVector(0, -1, 0);
+		break;
+	case ELastMoveDirection::Down:
+		BoostDirection = FVector(0, 1, 0);
+		break;
+	case ELastMoveDirection::Left:
+		BoostDirection = FVector(-1, 0, 0);
+		break;
+	case ELastMoveDirection::Right:
+		BoostDirection = FVector(1, 0, 0);
+		break;
+	default:
+		return;
+	}
+
+	// apply thrust in direction of last movement
+	LaunchCharacter(BoostDirection * ThrustPower, true, true);
+}

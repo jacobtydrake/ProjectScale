@@ -63,6 +63,10 @@ protected:
 	UFUNCTION()
 	void StopAttackAnim();
 
+	/* Used in attack animation. */
+	UFUNCTION()
+	void ApplyAttackBoost(const float ThrustPower);
+
 	/* Components */
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> CameraComp;
@@ -112,4 +116,12 @@ private:
 	FTimerHandle ComboWindowTimerHandle;
 	FTimerHandle InputBufferTimerHandle;
 	/****** END ATTACK PROPERTIES *****/
+
+	/* Boost Modifiers */
+	UPROPERTY(EditAnywhere)
+	float AttackThrustPower = 2000.0f;
+	float ComboAttackThrustPower = 1000.0f;
+
+	/* flag for disabling movement while attacking */
+	bool bIsMovementAllowed{ true };
 };
