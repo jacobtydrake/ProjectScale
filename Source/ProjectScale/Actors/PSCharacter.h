@@ -12,6 +12,7 @@ struct FInputActionValue;
 class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
+class UPSDamageComponent;
 
 UCLASS()
 class PROJECTSCALE_API APSCharacter : public APaperCharacter
@@ -40,6 +41,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerIAnputComponent) override;
+	virtual void PostInitializeComponents() override;
 
 	/* Input Actions */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -57,7 +59,10 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Attack")
 	void OnComboAttackRequested(ELastMoveDirection Direction);
 
-	/* Attack() events */
+	/* Damage Component Control */
+	void ToggleDamageComp(const bool bShouldActiveCollision);
+
+	/* Attack Animation events */
 	UFUNCTION()
 	void OnFirstAttackAnimationEnd();
 	UFUNCTION()
@@ -68,10 +73,12 @@ protected:
 	void ApplyAttackBoost(const float ThrustPower);
 
 	/* Components */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComp;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> SpringArmComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPSDamageComponent> DamageComp;
 
 private:
 

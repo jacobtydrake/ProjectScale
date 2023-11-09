@@ -8,6 +8,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h "
+#include "ProjectScale/Components/PSDamageComponent.h"
+#include "Components/BoxComponent.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -26,6 +28,9 @@ APSCharacter::APSCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create and attach the damage component
+	DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
+
 	// TODO: allow to be set in editor via variable reference
 	ComboWindowDuration = FirstAttackAnimationLength + 0.35f;
 
@@ -34,7 +39,6 @@ APSCharacter::APSCharacter()
 void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void APSCharacter::Tick(float DeltaTime)
@@ -51,6 +55,18 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &APSCharacter::StopMove);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APSCharacter::Attack);
 	}
+}
+
+void APSCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	//if (DamageComp)
+	//{
+	//	UBoxComponent* DamageBoxCollider = DamageComp->GetDamageCollisionBox();
+
+	//	DamageBoxCollider->SetupAttachment(RootComponent);
+	//}
 }
 
 void APSCharacter::StartMove(const FInputActionValue& Value)
@@ -132,6 +148,7 @@ void APSCharacter::Attack()
 
 		bIsMovementAllowed = false;
 
+		ToggleDamageComp(true);
 		ApplyAttackBoost(AttackThrustPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::OnFirstAttackAnimationEnd, FirstAttackAnimationLength, false);
@@ -146,6 +163,8 @@ void APSCharacter::Attack()
 			bIsComboAttackExecuting = true;
 
 			OnComboAttackRequested(LastMoveDirection);
+			ToggleDamageComp(true);
+			ApplyAttackBoost(AttackThrustPower);
 
 			GetWorldTimerManager().ClearTimer(AttackTimerHandle);
 			GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
@@ -164,6 +183,21 @@ void APSCharacter::Attack()
 	}
 }
 
+void APSCharacter::ToggleDamageComp(const bool bShouldActiveCollision)
+{
+	if (DamageComp)
+	{
+		if (bShouldActiveCollision)
+		{
+			DamageComp->ActivateDamageCollision();
+		}
+		else
+		{
+			DamageComp->DeactivateDamageCollision();
+		}
+	}
+}
+
 void APSCharacter::OnFirstAttackAnimationEnd()
 {
 	if (bIsComboAttackQueued)
@@ -173,6 +207,8 @@ void APSCharacter::OnFirstAttackAnimationEnd()
 		OnComboAttackRequested(LastMoveDirection);
 		bIsComboAttackQueued = false;
 		bIsComboAttackExecuting = true;
+
+		ToggleDamageComp(true);
 
 		ApplyAttackBoost(ComboAttackThrustPower);
 
@@ -188,6 +224,8 @@ void APSCharacter::StopAttackAnim()
 	bIsComboAttackQueued = false;
 	LastAttackEndTime = GetWorld()->GetTimeSeconds();
 
+	ToggleDamageComp(false);
+
 	// Re-enable movement
 	bIsMovementAllowed = true;
 }
@@ -195,8 +233,6 @@ void APSCharacter::StopAttackAnim()
 void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 {
 	FVector BoostDirection;
-
-	Jump();
 
 	switch (LastMoveDirection)
 	{
