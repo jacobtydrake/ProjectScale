@@ -164,7 +164,7 @@ void APSCharacter::Attack()
 
 			OnComboAttackRequested(LastMoveDirection);
 			ToggleDamageComp(true);
-			ApplyAttackBoost(AttackThrustPower);
+			ApplyAttackBoost(ComboAttackThrustPower);
 
 			GetWorldTimerManager().ClearTimer(AttackTimerHandle);
 			GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
@@ -232,26 +232,17 @@ void APSCharacter::StopAttackAnim()
 
 void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 {
-	FVector BoostDirection;
-
-	switch (LastMoveDirection)
-	{
-	case ELastMoveDirection::Up:
-		BoostDirection = FVector(0, -1, 0);
-		break;
-	case ELastMoveDirection::Down:
-		BoostDirection = FVector(0, 1, 0);
-		break;
-	case ELastMoveDirection::Left:
-		BoostDirection = FVector(-1, 0, 0);
-		break;
-	case ELastMoveDirection::Right:
-		BoostDirection = FVector(1, 0, 0);
-		break;
-	default:
-		return;
-	}
-
 	// apply thrust in direction of last movement
-	LaunchCharacter(BoostDirection * ThrustPower, true, true);
+
+	const FVector LastInputVector = GetMovementComponent()->GetLastInputVector();
+
+	if (LastInputVector == FVector::ZeroVector)
+	{
+		LaunchCharacter(CachedInputVector * ThrustPower, true, true);
+	}
+	else
+	{
+		CachedInputVector = LastInputVector;
+		LaunchCharacter(GetMovementComponent()->GetLastInputVector() * ThrustPower, true, true);
+	}
 }

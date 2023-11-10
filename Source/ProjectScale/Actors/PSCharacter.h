@@ -131,4 +131,6 @@ private:
 
 	/* flag for disabling movement while attacking */
 	bool bIsMovementAllowed{ true };
+
+	FVector CachedInputVector{ FVector::ZeroVector };
 };
