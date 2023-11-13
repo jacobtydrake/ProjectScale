@@ -33,7 +33,6 @@ APSCharacter::APSCharacter()
 
 	// TODO: allow to be set in editor via variable reference
 	ComboWindowDuration = FirstAttackAnimationLength + 0.35f;
-
 }
 
 void APSCharacter::BeginPlay()
@@ -57,22 +56,9 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	}
 }
 
-void APSCharacter::PostInitializeComponents()
+void APSCharacter::TakeDamage_Implementation(const float DamageAmount)
 {
-	Super::PostInitializeComponents();
-
-	//if (DamageComp)
-	//{
-	//	UBoxComponent* DamageBoxCollider = DamageComp->GetDamageCollisionBox();
-
-	//	DamageBoxCollider->SetupAttachment(RootComponent);
-	//}
-}
-
-void APSCharacter::StartMove(const FInputActionValue& Value)
-{
-	bIsHoldingMove = true;
-	Move(Value);
+	UE_LOG(PSCharacter, Display, TEXT("TakeDamage_Implementation: %f"), DamageAmount);
 }
 
 void APSCharacter::StopMove(const FInputActionValue& Value)
@@ -92,7 +78,7 @@ void APSCharacter::Move(const FInputActionValue& Value)
 	const FVector CameraForward = CameraComp->GetForwardVector();
 	const FVector CameraRight = CameraComp->GetRightVector();
 
-	// project horizontally -- maybe
+	// project horizontally
 	const FVector Forward = FVector(CameraForward.X, CameraForward.Y, 0.f).GetSafeNormal();
 	const FVector Right = FVector(CameraRight.X, CameraRight.Y, 0.f).GetSafeNormal();
 
@@ -142,7 +128,7 @@ void APSCharacter::Attack()
 	if (!bIsAttacking)
 	{
 		UE_LOG(PSCharacter, Display, TEXT("Attack executed"));
-
+		ToggleDamageComp(false);
 		bIsAttacking = true;
 		LastAttackTime = CurrentTime;
 
@@ -208,12 +194,14 @@ void APSCharacter::OnFirstAttackAnimationEnd()
 		bIsComboAttackQueued = false;
 		bIsComboAttackExecuting = true;
 
-		ToggleDamageComp(true);
-
 		ApplyAttackBoost(ComboAttackThrustPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
 		GetWorldTimerManager().ClearTimer(ComboWindowTimerHandle);
+	}
+	else
+	{
+		ToggleDamageComp(false);
 	}
 }
 
@@ -232,11 +220,29 @@ void APSCharacter::StopAttackAnim()
 
 void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 {
-	// apply thrust in direction of last movement
-
 	const FVector LastInputVector = GetMovementComponent()->GetLastInputVector();
 
-	if (LastInputVector == FVector::ZeroVector)
+	// if character was not moving, apply thrust where currently facing.
+	if (!bIsHoldingMove && !bIsComboAttackExecuting) //TODO: move second condition to func param and clean up logic.
+	{
+		FVector BoostDirection;
+		switch (LastHorizontalMoveDirection)
+		{
+		case ELastHorizontalMoveDirection::Left:
+			BoostDirection = FVector(-1, 0, 0);
+			LastMoveDirection = ELastMoveDirection::Left; // must update last move direction for correct animation selection
+			break;
+		case ELastHorizontalMoveDirection::Right:
+			BoostDirection = FVector(1, 0, 0);
+			LastMoveDirection = ELastMoveDirection::Right;
+			break;
+		default:
+			return;
+		}
+		CachedInputVector = BoostDirection;
+		LaunchCharacter(BoostDirection * ThrustPower, true, true);
+	}
+	else if (LastInputVector == FVector::ZeroVector)
 	{
 		LaunchCharacter(CachedInputVector * ThrustPower, true, true);
 	}

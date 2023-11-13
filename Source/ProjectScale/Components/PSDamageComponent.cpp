@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "ProjectScale/Interfaces/PSCombatInterface.h"
 #include "DrawDebugHelpers.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values for this component's properties
 UPSDamageComponent::UPSDamageComponent()
@@ -13,7 +14,7 @@ UPSDamageComponent::UPSDamageComponent()
     // Create the box component and attach it to the component's owner
     DamageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DamageCollision"));
     DamageCollision->SetBoxExtent(DamageCollisionSize);
-    DamageCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); // Start with collision off
+    DamageCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &UPSDamageComponent::OnDamageCollisionOverlap);
 }
 
@@ -42,9 +43,12 @@ void UPSDamageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if (GetOwner()->GetRootComponent())
+    if (AActor* OwnerActor = GetOwner())
     {
-        DamageCollision->SetupAttachment(GetOwner()->GetRootComponent());
+        if (UCapsuleComponent* CapsuleComponent = Cast<UCapsuleComponent>(OwnerActor->GetRootComponent()))
+        {
+            DamageCollision->AttachToComponent(CapsuleComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+        }
     }
 }
 
@@ -52,24 +56,32 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    // Only draw the debug box if collision is enabled
- /*   if (DamageCollision->IsCollisionEnabled())
-    {*/
-        DrawDebugBox(
+    if (DamageCollision->IsCollisionEnabled())
+    {
+        DrawDebugBox
+        (
             GetWorld(),
             DamageCollision->GetComponentLocation(),
             DamageCollision->GetScaledBoxExtent(),
             FQuat(DamageCollision->GetComponentRotation()),
             FColor::Red,
             false,
-            0.1f,
+            0.01f,
             10,
-            20
+            2
         );
-    //}
+    }
 }
 
-void UPSDamageComponent::OnDamageCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void UPSDamageComponent::OnDamageCollisionOverlap
+(
+    UPrimitiveComponent* OverlappedComponent,
+    AActor* OtherActor, 
+    UPrimitiveComponent* OtherComp,
+    int32 OtherBodyIndex, 
+    bool bFromSweep, 
+    const FHitResult& SweepResult
+)
 {
     if (OtherActor == GetOwner()) return;
         

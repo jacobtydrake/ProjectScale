@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
 #include "ProjectScale/Datatypes/Charactertypes.h"
+#include "ProjectScale/Interfaces/PSCombatInterface.h"
 #include "PSCharacter.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(PSCharacter, Log, All);
@@ -15,7 +16,7 @@ class USpringArmComponent;
 class UPSDamageComponent;
 
 UCLASS()
-class PROJECTSCALE_API APSCharacter : public APaperCharacter
+class PROJECTSCALE_API APSCharacter : public APaperCharacter, public IPSCombatInterface
 {
 	GENERATED_BODY()
 
@@ -41,7 +42,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerIAnputComponent) override;
-	virtual void PostInitializeComponents() override;
+
+	/* PSCombatInterface Implementation */
+	virtual void TakeDamage_Implementation(const float DamageAmount);
 
 	/* Input Actions */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -50,7 +53,6 @@ protected:
 	TObjectPtr<UInputAction> AttackAction;
 
 	/* Input Action Bindings */
-	virtual void StartMove(const FInputActionValue& Value);
 	virtual void StopMove(const FInputActionValue& Value);
 	virtual void Move(const FInputActionValue& Value);
 	virtual void Attack();
@@ -127,6 +129,7 @@ private:
 	/* Boost Modifiers */
 	UPROPERTY(EditAnywhere)
 	float AttackThrustPower = 2000.0f;
+	UPROPERTY(EditAnywhere)
 	float ComboAttackThrustPower = 1000.0f;
 
 	/* flag for disabling movement while attacking */
