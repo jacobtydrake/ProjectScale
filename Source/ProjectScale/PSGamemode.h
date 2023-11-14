@@ -14,6 +14,8 @@ class PROJECTSCALE_API APSGamemode : public AGameMode
 {
 	GENERATED_BODY()
 
+	APSGamemode();
+
 protected:
 	virtual void StartPlay() override;
 	

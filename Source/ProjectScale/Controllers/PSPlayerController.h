@@ -7,6 +7,7 @@
 #include "PSPlayerController.generated.h"
 
 class UInputMappingContext;
+class APSHUD;
 
 /**
  * 
@@ -19,7 +20,15 @@ class PROJECTSCALE_API APSPlayerController : public APlayerController
 	virtual void BeginPlay() override;
 	
 public:
+	// TODO: Handle this only via c++
+	/* Triggered from blueprint */
+	UFUNCTION(BlueprintCallable)
+	void OnPauseButtonPressed();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> PlayerCharacterMappingContext;
+
+private:
+
+	TObjectPtr<APSHUD> CachedHUD;
 };

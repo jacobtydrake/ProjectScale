@@ -104,7 +104,29 @@ void APSCharacter::Move(const FInputActionValue& Value)
 		LastMoveDirection = ELastMoveDirection::Down;
 	}
 }
+/*          Second Attack Input
+				   |
+	[		   ]   |
+	------------   |
+	First Attack   |
+				   |
+				   V
 
+				   [		   ]
+					------------
+					Second Attack
+
+	  [		          ]
+	  -----------------
+		Combo Window
+
+	[		                   ]
+	----------------------------
+		 Total Attack Duration
+*/
+
+// flags are set to control animation states in ABP_BuffBaby state machine
+// OnComboAttackRequested() triggers custom event in BP_PSCharacter with Animation Overrides
 void APSCharacter::Attack()
 {
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -121,13 +143,13 @@ void APSCharacter::Attack()
 	}
 	else if (bIsComboAttackQueued || bIsComboAttackExecuting)
 	{
-		UE_LOG(PSCharacter, Display, TEXT("Early return"));
+		UE_LOG(PSCharacter, Display, TEXT("Combo attack is already in progress"));
 		return;
 	}
 
 	if (!bIsAttacking)
 	{
-		UE_LOG(PSCharacter, Display, TEXT("Attack executed"));
+		UE_LOG(PSCharacter, Display, TEXT("First Attack executed"));
 		ToggleDamageComp(false);
 		bIsAttacking = true;
 		LastAttackTime = CurrentTime;
@@ -186,6 +208,8 @@ void APSCharacter::ToggleDamageComp(const bool bShouldActiveCollision)
 
 void APSCharacter::OnFirstAttackAnimationEnd()
 {
+	ToggleDamageComp(false);
+
 	if (bIsComboAttackQueued)
 	{
 		UE_LOG(PSCharacter, Display, TEXT("Combo Attack executed"));
@@ -194,14 +218,12 @@ void APSCharacter::OnFirstAttackAnimationEnd()
 		bIsComboAttackQueued = false;
 		bIsComboAttackExecuting = true;
 
+		ToggleDamageComp(true);
+
 		ApplyAttackBoost(ComboAttackThrustPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
 		GetWorldTimerManager().ClearTimer(ComboWindowTimerHandle);
-	}
-	else
-	{
-		ToggleDamageComp(false);
 	}
 }
 
@@ -214,7 +236,6 @@ void APSCharacter::StopAttackAnim()
 
 	ToggleDamageComp(false);
 
-	// Re-enable movement
 	bIsMovementAllowed = true;
 }
 
