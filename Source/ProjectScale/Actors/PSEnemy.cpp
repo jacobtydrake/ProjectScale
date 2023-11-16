@@ -71,6 +71,12 @@ void APSEnemy::TakeDamage_Implementation(const float DamageAmount)
 	}
 }
 
+void APSEnemy::InitializeDirection(const FVector& NewDirection)
+{
+	MovementDirection = NewDirection.GetSafeNormal();
+	DirectionArrow->SetWorldRotation(MovementDirection.Rotation());
+}
+
 void APSEnemy::PerformAttack()
 {
 	UE_LOG(PSEnemy, Display, TEXT("APSEnemy::PerformAttack()"))

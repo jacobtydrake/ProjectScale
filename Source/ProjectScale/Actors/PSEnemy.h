@@ -23,6 +23,9 @@ public:
 	APSEnemy();
 	APSEnemy(FVector NewDirection);
 
+	UFUNCTION(BlueprintCallable)
+	void InitializeDirection(const FVector& NewDirection);
+
 protected:
 	/* Overrides */
 	virtual void BeginPlay() override;

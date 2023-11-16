@@ -22,6 +22,7 @@ APSCharacter::APSCharacter()
 	SpringArmComp->TargetArmLength = 200.0f;
 	//SpringArmComp->SetRelativeRotation(FRotator(-90.f, -90.f, 0.f));
 	SpringArmComp->bUsePawnControlRotation = false;
+	SpringArmComp->bDoCollisionTest = false;
 
 	// Create the follow camera
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -104,26 +105,6 @@ void APSCharacter::Move(const FInputActionValue& Value)
 		LastMoveDirection = ELastMoveDirection::Down;
 	}
 }
-/*          Second Attack Input
-				   |
-	[		   ]   |
-	------------   |
-	First Attack   |
-				   |
-				   V
-
-				   [		   ]
-					------------
-					Second Attack
-
-	  [		          ]
-	  -----------------
-		Combo Window
-
-	[		                   ]
-	----------------------------
-		 Total Attack Duration
-*/
 
 // flags are set to control animation states in ABP_BuffBaby state machine
 // OnComboAttackRequested() triggers custom event in BP_PSCharacter with Animation Overrides
