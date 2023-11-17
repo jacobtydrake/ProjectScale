@@ -53,7 +53,7 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
     {
         // calculate a random point within the platform for the enemy to move towards
         float RandomAngle = FMath::RandRange(0.f, 360.f);
-        float RandomRadius = FMath::RandRange(0.f, PlatformRadius - DirectionTolerance); // Adjust radius within the platform
+        float RandomRadius = FMath::RandRange(0.f, PlatformRadius - DirectionTolerance); // adjust radius within the platform
         FVector TargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(RandomAngle)) * RandomRadius, FMath::Sin(FMath::DegreesToRadians(RandomAngle)) * RandomRadius, ZOffset);
 
         // calculate the direction vector from the enemy to the target point
@@ -69,11 +69,12 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
 
 void APSCircularEnemySpawner::HandleEnemySpawn()
 {
-    int32 NumEnemiesToSpawn = FMath::RoundToInt(SpawnCurve->GetFloatValue(CurrentTime));
-    SpawnEnemies(NumEnemiesToSpawn);
+    SpawnSingleEnemy();
 
-    // update timer for next spawn
+    // update timer for next spawn based on the curve
     float NextSpawnDelay = GetSpawnFrequency();
+    UE_LOG(CircularEnemySpawner, Log, TEXT("Spawning enemies. Next spawn in %f seconds."), NextSpawnDelay);
+
     GetWorldTimerManager().SetTimer(SpawnTimer, this, &APSCircularEnemySpawner::HandleEnemySpawn, NextSpawnDelay, false);
 
     CurrentTime += NextSpawnDelay;
@@ -89,8 +90,14 @@ float APSCircularEnemySpawner::GetSpawnFrequency()
 {
     if (SpawnCurve)
     {
-        //ensure non-negative and non-zero frequency
-        return FMath::Max(SpawnCurve->GetFloatValue(CurrentTime), 0.1f);
+        float CurveValue = SpawnCurve->GetFloatValue(CurrentTime);
+        // Inverse relationship: Higher curve values decrease the spawn delay
+        float Frequency = 1.0f / FMath::Max(BaseSpawnRate * CurveValue, 0.01f);
+
+        UE_LOG(CircularEnemySpawner, Log, TEXT("Current Time: %f, Curve Value: %f, Calculated Frequency: %f"), CurrentTime, CurveValue, Frequency);
+
+        return Frequency;
     }
-    return 1.0f;
+    return 1.0f / BaseSpawnRate; // Default frequency if no curve is set
 }
+

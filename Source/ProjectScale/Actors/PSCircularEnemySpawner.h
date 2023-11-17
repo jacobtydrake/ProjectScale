@@ -43,17 +43,18 @@ public:
 
     /* amount direction in degrees that enemy direction can be randomly set. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
-    float DirectionTolerance = 30.0f;
+    float DirectionTolerance = 1.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
     TSubclassOf<APSEnemy> EnemyClass;
 
 
-    // TODO: Move everything below to EnemyController class
-
     // curve to control spawn frequency and number of enemies
     UPROPERTY(EditAnywhere, Category = "Spawning")
     TObjectPtr<UCurveFloat> SpawnCurve;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    float BaseSpawnRate { 0.1f };
 
     FTimerHandle SpawnTimer;
 

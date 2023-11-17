@@ -108,7 +108,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AttackCooldown{ 0.33f };
 
-	/* Used to tarck the time between inputs for the AttackCooldown. */
+	/* Used to track the time between inputs for the AttackCooldown. */
 	float LastAttackEndTime{ 0.0f };
 
 	/* Attack Conditions */

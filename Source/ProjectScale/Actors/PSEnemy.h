@@ -12,7 +12,6 @@ DECLARE_LOG_CATEGORY_EXTERN(PSEnemy, Log, All);
 class UCapsuleComponent;
 class UPaperFlipbookComponent;
 class UMaterialInstanceDynamic;
-class UArrowComponent;
 
 UCLASS()
 class PROJECTSCALE_API APSEnemy : public AActor, public IPSCombatInterface
@@ -40,16 +39,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPaperFlipbookComponent> FlipbookComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UArrowComponent> DirectionArrow;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystemComponent> DeathEffect;
-
-	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void PerformAttack();
 
 	/**/
 	UFUNCTION(BlueprintCallable)
-	void Die();
+	virtual void Die();
 
 	/**/
 	void RevertSpriteColor();
@@ -68,11 +62,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	FVector MovementDirection{ 1,0,0 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	float AttackDamage{ 1.0f };
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	float AttackRange { 5.0f };
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bShouldMove{ true };

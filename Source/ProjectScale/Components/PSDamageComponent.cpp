@@ -83,7 +83,10 @@ void UPSDamageComponent::OnDamageCollisionOverlap
     const FHitResult& SweepResult
 )
 {
-    if (OtherActor == GetOwner()) return;
+    AActor* OwnerActor = GetOwner();
+    if (!OwnerActor || OtherActor == OwnerActor) return;
+
+    if (OtherActor->IsA(OwnerActor->GetClass())) return;
         
     if (OtherActor->Implements<UPSCombatInterface>())
     {

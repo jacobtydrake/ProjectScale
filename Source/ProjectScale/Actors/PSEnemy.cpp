@@ -2,7 +2,6 @@
 #include "PSEnemy.h"
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "Components/ArrowComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
 DEFINE_LOG_CATEGORY(PSEnemy);
@@ -21,10 +20,6 @@ APSEnemy::APSEnemy()
 	FlipbookComp->PrimaryComponentTick.TickGroup = TG_PrePhysics;
 	FlipbookComp->SetCollisionProfileName(TEXT("DefaultEnemyCollision"));
 	FlipbookComp->SetGenerateOverlapEvents(true);
-
-	DirectionArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("DirectionArrow"));
-	DirectionArrow->SetupAttachment(RootComponent);
-	DirectionArrow->ArrowSize = 2.0f;
 
 	DeathEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DeathEffect"));
 	DeathEffect->SetupAttachment(RootComponent);
@@ -48,8 +43,7 @@ void APSEnemy::Tick(float DeltaTime)
 
 	if (bShouldMove)
 	{
-		FVector Direction = DirectionArrow->GetForwardVector();
-		FVector NewLocation = GetActorLocation() + (Direction * MovementSpeed * DeltaTime);
+		FVector NewLocation = GetActorLocation() + (MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime);
 		SetActorLocation(NewLocation);
 	}
 }
@@ -74,12 +68,6 @@ void APSEnemy::TakeDamage_Implementation(const float DamageAmount)
 void APSEnemy::InitializeDirection(const FVector& NewDirection)
 {
 	MovementDirection = NewDirection.GetSafeNormal();
-	DirectionArrow->SetWorldRotation(MovementDirection.Rotation());
-}
-
-void APSEnemy::PerformAttack()
-{
-	UE_LOG(PSEnemy, Display, TEXT("APSEnemy::PerformAttack()"))
 }
 
 void APSEnemy::Die()
@@ -93,7 +81,7 @@ void APSEnemy::Die()
 		DeathEffect->Activate(true);
 	}
 
-	float DestructionDelay = 2.0f; 
+	float DestructionDelay = 0.5f; 
 	SetLifeSpan(DestructionDelay);
 }
 
