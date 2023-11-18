@@ -24,8 +24,8 @@ void APSChasingEnemy::BeginPlay()
 
 void APSChasingEnemy::Tick(float DeltaTime)
 {
-   Super::Tick(DeltaTime);
    UpdateChaseBehavior();
+   Super::Tick(DeltaTime);
 }
 
 void APSChasingEnemy::UpdateChaseBehavior()
@@ -44,7 +44,9 @@ void APSChasingEnemy::UpdateChaseBehavior()
 
             if (DistanceToPlayer <= AttackRange && CurrentTime - LastAttackTime > AttackCooldown)
             {
+                SetActorTickEnabled(false);
                 bShouldMove = false;
+                bIsAttacking = true;
                 PerformAttack();
             }
         }
@@ -54,12 +56,7 @@ void APSChasingEnemy::UpdateChaseBehavior()
 void APSChasingEnemy::PerformAttack()
 {
     UE_LOG(PSEnemy, Display, TEXT("Enemy Performing Attack..."));
-    DamageComp->ActivateDamageCollision();
-
-    bIsLaunching = true;
-
-    GetWorldTimerManager().SetTimer(LaunchTimerHandle, this, &APSChasingEnemy::HandleLaunch, 0.016f, true);
-
+    GetWorldTimerManager().SetTimer(LaunchDelayTimerHandle, this, &APSChasingEnemy::StartLaunch, AttackToLaunchDelay, false);
     GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSChasingEnemy::EndAttack, TotalAttackDuration, false);
     LastAttackTime = GetWorld()->GetTimeSeconds();
 }
@@ -70,6 +67,14 @@ void APSChasingEnemy::EndAttack()
 
     bIsAttacking = false;
     bShouldMove = true;
+    SetActorTickEnabled(true);
+}
+
+void APSChasingEnemy::StartLaunch()
+{
+    DamageComp->ActivateDamageCollision();
+    bIsLaunching = true;
+    GetWorldTimerManager().SetTimer(LaunchTimerHandle, this, &APSChasingEnemy::HandleLaunch, 0.016f, true);
 }
 
 void APSChasingEnemy::HandleLaunch()

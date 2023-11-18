@@ -38,6 +38,9 @@ protected:
 	void EndAttack();
 
 	UFUNCTION()
+	void StartLaunch();
+
+	UFUNCTION()
 	void HandleLaunch();
 
 	/* TODO: cleanup header */
@@ -57,16 +60,18 @@ protected:
 	float AttackThrustPower{ 1.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float TotalAttackDuration{ 0.5f };
+	float TotalAttackDuration{ 1.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float AttackHurtDuration{ 0.2f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float AttackAnimationLength{ 0.3f };
+	float AttackAnimationLength{ 0.3f }; 
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float LaunchDuration{ 0.3f };
+
+	float AttackToLaunchDelay = .5f;
 
 	FVector LaunchVelocity{ 0, 0, 0 };
 
@@ -79,6 +84,7 @@ protected:
 	TObjectPtr<APSCharacter> PlayerCharacter;
 
 	FTimerHandle AttackTimerHandle;
+	FTimerHandle LaunchDelayTimerHandle;
 	FTimerHandle LaunchTimerHandle;
 
 	bool bIsAttacking{ false };
