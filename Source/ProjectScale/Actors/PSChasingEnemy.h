@@ -8,6 +8,7 @@
 
 class APSCharacter;
 class UPSDamageComponent;
+class TimerManager;
 
 /**
  * 
@@ -19,11 +20,15 @@ class PROJECTSCALE_API APSChasingEnemy : public APSEnemy
 
 public:
 	APSChasingEnemy();
-
+	
+	UFUNCTION(BlueprintCallable)
+	const bool GetIsLaunching() const { return bIsLaunching; }
 protected:
 	/* Overrides */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Die();
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -71,7 +76,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float LaunchDuration{ 0.3f };
 
-	float AttackToLaunchDelay = .5f;
+	float AttackToLaunchDelay{ .5f };
 
 	FVector LaunchVelocity{ 0, 0, 0 };
 
@@ -80,14 +85,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float AttackCooldown{ 2.0f }; 
 
+private:
+
 	/* cached reference to PSCharacter */
 	TObjectPtr<APSCharacter> PlayerCharacter;
+
+	FTimerManager* TimerManager;
 
 	FTimerHandle AttackTimerHandle;
 	FTimerHandle LaunchDelayTimerHandle;
 	FTimerHandle LaunchTimerHandle;
-
-	bool bIsAttacking{ false };
 
 	bool bIsLaunching{ false };
 };

@@ -22,6 +22,9 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 public:
+	UFUNCTION()
+	void SetTeamTag(const FName TeamTagName) { TeamTag = TeamTagName; }
+
 	TObjectPtr<UBoxComponent> GetDamageCollisionBox();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void ActivateDamageCollision();
@@ -32,6 +35,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> DamageCollision;
 
+	// Tag to identify valid targets
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
+	FName TeamTag;
+	
 	// TODO: make dynamic
 	const FVector DamageCollisionSize = FVector(50.f, 50.f, 50.f);
 

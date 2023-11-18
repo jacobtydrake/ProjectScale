@@ -10,6 +10,8 @@ APSEnemy::APSEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	Tags.Add(TEXT("Enemy"));
+
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	RootComponent = CapsuleComp;
 
@@ -46,10 +48,20 @@ void APSEnemy::Tick(float DeltaTime)
 		FVector NewLocation = GetActorLocation() + (MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime);
 		SetActorLocation(NewLocation);
 	}
+
+	if (FlipbookComp)
+	{
+		FVector Scale = FlipbookComp->GetComponentScale();
+		Scale.X = -FMath::Sign(MovementDirection.X) * FMath::Abs(Scale.X);
+		FlipbookComp->SetWorldScale3D(Scale);
+	}
 }
 
 void APSEnemy::TakeDamage_Implementation(const float DamageAmount)
 {
+	if (bIsDead)
+		return;
+
 	UE_LOG(LogTemp, Display, TEXT("TakeDamage_Implementation: %f"), DamageAmount);
 
 	FlipbookComp->SetSpriteColor(FLinearColor::Red);
@@ -74,6 +86,7 @@ void APSEnemy::Die()
 {
 	UE_LOG(PSEnemy, Display, TEXT("APSEnemy::Die()"));
 
+	bIsDead = true;
 	bShouldMove = false;
 
 	if (DeathEffect)

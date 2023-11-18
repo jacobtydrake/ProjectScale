@@ -16,8 +16,10 @@ DEFINE_LOG_CATEGORY(PSCharacter);
 APSCharacter::APSCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 
+	Tags.Add(TEXT("Player"));
+
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->TargetArmLength = 200.0f;
 	//SpringArmComp->SetRelativeRotation(FRotator(-90.f, -90.f, 0.f));
@@ -31,6 +33,7 @@ APSCharacter::APSCharacter()
 
 	// Create and attach the damage component
 	DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
+	DamageComp->SetTeamTag("Player");
 
 	// TODO: allow to be set in editor via variable reference
 	ComboWindowDuration = FirstAttackAnimationLength + 0.35f;

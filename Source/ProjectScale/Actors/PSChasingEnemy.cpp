@@ -5,10 +5,13 @@
 #include "PSCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectScale/Components/PSDamageComponent.h"
+#include "TimerManager.h"
 
 APSChasingEnemy::APSChasingEnemy()
 {
+    //Tags.Add("Enemy");
     DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
+    DamageComp->SetTeamTag("Enemy");
 }
 
 void APSChasingEnemy::BeginPlay()
@@ -20,12 +23,26 @@ void APSChasingEnemy::BeginPlay()
     {
         DamageComp->DeactivateDamageCollision();
     }
+
+    TimerManager = &GetWorld()->GetTimerManager();
 }
 
 void APSChasingEnemy::Tick(float DeltaTime)
 {
-   UpdateChaseBehavior();
+   if (!bIsAttacking)
+   {
+       UpdateChaseBehavior();
+   }
    Super::Tick(DeltaTime);
+}
+
+void APSChasingEnemy::Die()
+{
+    Super::Die();
+
+    TimerManager->ClearTimer(AttackTimerHandle);
+    TimerManager->ClearTimer(LaunchDelayTimerHandle);
+    TimerManager->ClearTimer(LaunchTimerHandle);
 }
 
 void APSChasingEnemy::UpdateChaseBehavior()
@@ -44,7 +61,6 @@ void APSChasingEnemy::UpdateChaseBehavior()
 
             if (DistanceToPlayer <= AttackRange && CurrentTime - LastAttackTime > AttackCooldown)
             {
-                SetActorTickEnabled(false);
                 bShouldMove = false;
                 bIsAttacking = true;
                 PerformAttack();
@@ -67,7 +83,6 @@ void APSChasingEnemy::EndAttack()
 
     bIsAttacking = false;
     bShouldMove = true;
-    SetActorTickEnabled(true);
 }
 
 void APSChasingEnemy::StartLaunch()

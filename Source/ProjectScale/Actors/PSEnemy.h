@@ -22,6 +22,14 @@ public:
 	APSEnemy();
 	APSEnemy(FVector NewDirection);
 
+	/* Getters */
+	UFUNCTION(BlueprintCallable)
+	const bool GetIsAttacking() const { return bIsAttacking; }
+	UFUNCTION(BlueprintCallable)
+	const bool GetIsDead() const { return bIsDead; }
+	UFUNCTION(BlueprintCallable)
+	const FVector GetMovementDirection() const { return MovementDirection; }
+
 	UFUNCTION(BlueprintCallable)
 	void InitializeDirection(const FVector& NewDirection);
 
@@ -63,7 +71,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	FVector MovementDirection{ 1,0,0 };
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY()
 	bool bShouldMove{ true };
+
+	UPROPERTY()
+	bool bIsAttacking{ false };
+
+	UPROPERTY()
+	bool bIsDead{ false };
 
 };

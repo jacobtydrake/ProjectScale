@@ -14,7 +14,7 @@ UPSDamageComponent::UPSDamageComponent()
     // Create the box component and attach it to the component's owner
     DamageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DamageCollision"));
     DamageCollision->SetBoxExtent(DamageCollisionSize);
-    DamageCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    DamageCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &UPSDamageComponent::OnDamageCollisionOverlap);
 }
 
@@ -84,10 +84,16 @@ void UPSDamageComponent::OnDamageCollisionOverlap
 )
 {
     AActor* OwnerActor = GetOwner();
-    if (!OwnerActor || OtherActor == OwnerActor) return;
 
-    if (OtherActor->IsA(OwnerActor->GetClass())) return;
-        
+    // Check if the OtherActor has the required tag
+    if (OtherActor->ActorHasTag(TeamTag))
+    {
+        return;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Display, TEXT("Tags are different."))
+    }
     if (OtherActor->Implements<UPSCombatInterface>())
     {
         IPSCombatInterface::Execute_TakeDamage(OtherActor, DamageAmount);
