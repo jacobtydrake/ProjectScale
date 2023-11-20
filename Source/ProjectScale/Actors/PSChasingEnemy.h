@@ -65,7 +65,7 @@ protected:
 	float AttackThrustPower{ 1.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float TotalAttackDuration{ 1.0f };
+	float TotalAttackDuration{ 1.5f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float AttackHurtDuration{ 0.2f };

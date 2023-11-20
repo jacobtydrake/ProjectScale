@@ -74,6 +74,9 @@ protected:
 	UFUNCTION()
 	void ApplyAttackBoost(const float ThrustPower);
 
+	UFUNCTION()
+	void Die();
+
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComp;
@@ -90,16 +93,27 @@ private:
 	ELastHorizontalMoveDirection LastHorizontalMoveDirection{ ELastHorizontalMoveDirection::Left };
 	ELastMoveDirection LastMoveDirection{ ELastMoveDirection::Left };
 
+
+	UPROPERTY()
+	float CurrentHealth{ 0.0f };
+
+	UPROPERTY(EditAnywhere)
+	float MaxHealth{ 5.0f };
+
 	/****** START ATTACK PROPERTIES *****/
 	/* Attack Properties */
 	UPROPERTY(EditAnywhere)
-	float FirstAttackAnimationLength{ 0.34f };
+	float FirstAttackAnimationLength{ 0.333f };
 	UPROPERTY(EditAnywhere)
-	float SecondAttackAnimationLength{ 0.34f };
+	float SecondAttackAnimationLength{ 0.333f };
 
 	/* Amount of time used to ignore repeated inputs. */
 	UPROPERTY(EditAnywhere)
-	float InputBufferTime{ 0.2f };
+	float InputBufferTime{ 0.18f };
+
+	/* Time + FirstAttackAnim to allow for second input for second attack */
+	UPROPERTY(EditAnywhere)
+	float ComboWindowDurationOffset{ 0.085f };
 
 	/* Used to track the time between inputs for the InputBufferTime */
 	float LastAttackTime{ 0.0f };
@@ -117,9 +131,6 @@ private:
 	bool bIsComboAttackExecuting{ false };
 	bool bIsComboAttackQueued{ false };
 
-	/* Used to track */
-	float ComboWindowDuration{ 0.0f };
-
 	/* Timers */
 	FTimerHandle AttackTimerHandle;
 	FTimerHandle ComboWindowTimerHandle;
@@ -132,8 +143,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ComboAttackThrustPower = 1000.0f;
 
-	/* flag for disabling movement while attacking */
+	/* flag for disabling movement while attacking or dying */
 	bool bIsMovementAllowed{ true };
 
 	FVector CachedInputVector{ FVector::ZeroVector };
+
+	/* Controls rate at which player can take damage */
+	UPROPERTY(EditAnywhere)
+	float DamageCooldown{ 1.0f };
+	float LastDamageTime{ 0.0f };
 };

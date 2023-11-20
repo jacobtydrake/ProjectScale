@@ -12,6 +12,7 @@ DECLARE_LOG_CATEGORY_EXTERN(PSEnemy, Log, All);
 class UCapsuleComponent;
 class UPaperFlipbookComponent;
 class UMaterialInstanceDynamic;
+class APSPickupItem;
 
 UCLASS()
 class PROJECTSCALE_API APSEnemy : public AActor, public IPSCombatInterface
@@ -49,9 +50,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystemComponent> DeathEffect;
 
+	// Variable to hold the pickup item Blueprint class
+	UPROPERTY(BlueprintReadOnly, Category = "Pickup")
+	TSubclassOf<APSPickupItem> PickupItemBlueprint;
+
+
 	/**/
 	UFUNCTION(BlueprintCallable)
 	virtual void Die();
+
+	UFUNCTION()
+	void SpawnPickupItem();
 
 	/**/
 	void RevertSpriteColor();

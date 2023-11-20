@@ -3,7 +3,7 @@
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-
+#include "PSPickupItem.h"
 DEFINE_LOG_CATEGORY(PSEnemy);
 
 APSEnemy::APSEnemy()
@@ -26,6 +26,16 @@ APSEnemy::APSEnemy()
 	DeathEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DeathEffect"));
 	DeathEffect->SetupAttachment(RootComponent);
 	DeathEffect->bAutoActivate = false;
+
+	static ConstructorHelpers::FClassFinder<APSPickupItem> PickupItemClass(TEXT("/Game/ProjectScale/Blueprints/Actors/BP_PSPickupItem.BP_PSPickupItem_C"));
+	if (PickupItemClass.Succeeded())
+	{
+		PickupItemBlueprint = PickupItemClass.Class;
+	}
+	else
+	{
+		UE_LOG(PSEnemy, Warning, TEXT("Could not find PickupItem Blueprint class!"));
+	}
 }
 
 APSEnemy::APSEnemy(FVector NewDirection)
@@ -94,9 +104,31 @@ void APSEnemy::Die()
 		DeathEffect->Activate(true);
 	}
 
-	float DestructionDelay = 0.5f; 
+	float DelayBeforeSpawn = 0.45f;  // slightly less than the destruction delay
+	float DestructionDelay = 0.5f;
+
+	FTimerHandle SpawnItemTimerHandle;
+	GetWorldTimerManager().SetTimer(SpawnItemTimerHandle, this, &APSEnemy::SpawnPickupItem, DelayBeforeSpawn, false);
+
 	SetLifeSpan(DestructionDelay);
 }
+void APSEnemy::SpawnPickupItem()
+{
+	if (PickupItemBlueprint)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		GetWorld()->SpawnActor<APSPickupItem>(PickupItemBlueprint, GetActorLocation(), GetActorRotation(), SpawnParams);
+
+		UE_LOG(PSEnemy, Warning, TEXT("ItemSpawned"));
+	}
+	else
+	{
+		UE_LOG(PSEnemy, Display, TEXT("PickupItemBlueprint not valid!"));
+	}
+}
+
 
 void APSEnemy::RevertSpriteColor()
 {

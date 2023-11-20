@@ -79,8 +79,6 @@ void APSChasingEnemy::PerformAttack()
 
 void APSChasingEnemy::EndAttack()
 {
-    DamageComp->DeactivateDamageCollision();
-
     bIsAttacking = false;
     bShouldMove = true;
 }
@@ -105,6 +103,7 @@ void APSChasingEnemy::HandleLaunch()
             // stop the launch
             bIsLaunching = false;
             LaunchDuration = 0.3f;
+            DamageComp->DeactivateDamageCollision();
             GetWorldTimerManager().ClearTimer(LaunchTimerHandle);
         }
     }

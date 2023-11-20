@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h "
 #include "ProjectScale/Components/PSDamageComponent.h"
 #include "Components/BoxComponent.h"
+#include "ProjectScale/Controllers/PSPlayerController.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -35,13 +36,17 @@ APSCharacter::APSCharacter()
 	DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
 	DamageComp->SetTeamTag("Player");
 
-	// TODO: allow to be set in editor via variable reference
-	ComboWindowDuration = FirstAttackAnimationLength + 0.35f;
+	// ComboWindow must at least be the length of the first attack
+	ComboWindowDurationOffset += FirstAttackAnimationLength;
+
+	// set starting health to max health
+	CurrentHealth = MaxHealth;
 }
 
 void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(PSCharacter, Display, TEXT("Player Health: %f"), CurrentHealth);
 }
 
 void APSCharacter::Tick(float DeltaTime)
@@ -62,7 +67,23 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void APSCharacter::TakeDamage_Implementation(const float DamageAmount)
 {
-	UE_LOG(PSCharacter, Display, TEXT("TakeDamage_Implementation: %f"), DamageAmount);
+
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (CurrentTime - LastDamageTime >= DamageCooldown)
+	{
+		LastDamageTime = CurrentTime;
+
+		CurrentHealth -= DamageAmount;
+
+		if (CurrentHealth <= 0.0f)
+		{
+			Die();
+		}
+	}
+	else
+	{
+		UE_LOG(PSCharacter, Display, TEXT("Damage on cooldown, no damage taken"));
+	}
 }
 
 void APSCharacter::StopMove(const FInputActionValue& Value)
@@ -144,9 +165,9 @@ void APSCharacter::Attack()
 		ApplyAttackBoost(AttackThrustPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::OnFirstAttackAnimationEnd, FirstAttackAnimationLength, false);
-		GetWorldTimerManager().SetTimer(ComboWindowTimerHandle, this, &APSCharacter::StopAttackAnim, ComboWindowDuration, false);
+		GetWorldTimerManager().SetTimer(ComboWindowTimerHandle, this, &APSCharacter::StopAttackAnim, ComboWindowDurationOffset, false);
 	}
-	else if (CurrentTime - LastAttackTime < ComboWindowDuration)
+	else if (CurrentTime - LastAttackTime < ComboWindowDurationOffset)
 	{
 		if (!bIsComboAttackQueued && !bIsComboAttackExecuting && CurrentTime - LastAttackTime > FirstAttackAnimationLength)
 		{
@@ -255,5 +276,13 @@ void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 	{
 		CachedInputVector = LastInputVector;
 		LaunchCharacter(GetMovementComponent()->GetLastInputVector() * ThrustPower, true, true);
+	}
+}
+
+void APSCharacter::Die()
+{
+	if (APSPlayerController* PC = Cast<APSPlayerController>(GetController()))
+	{
+		PC->OnCharacterDeath();
 	}
 }

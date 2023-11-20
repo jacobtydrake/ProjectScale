@@ -53,7 +53,7 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
     {
         // calculate a random point within the platform for the enemy to move towards
         float RandomAngle = FMath::RandRange(0.f, 360.f);
-        float RandomRadius = FMath::RandRange(0.f, PlatformRadius - DirectionTolerance); // adjust radius within the platform
+        float RandomRadius = FMath::RandRange(0.f, PlatformRadius); // adjust radius within the platform
         FVector TargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(RandomAngle)) * RandomRadius, FMath::Sin(FMath::DegreesToRadians(RandomAngle)) * RandomRadius, ZOffset);
 
         // calculate the direction vector from the enemy to the target point

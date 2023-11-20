@@ -38,15 +38,19 @@ private:
 	// Tag to identify valid targets
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	FName TeamTag;
-	
-	// TODO: make dynamic
-	const FVector DamageCollisionSize = FVector(50.f, 50.f, 50.f);
 
 	UFUNCTION()
 	void OnDamageCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	// Damage value
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
-	float DamageAmount = 20.f;
+	float DamageAmount = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage Collision", meta = (AllowPrivateAccess = "true"))
+	FVector DamageCollisionSize = FVector(50.f, 50.f, 50.f);
+
+	// Editable relative location of the damage box
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage Collision", meta = (AllowPrivateAccess = "true"))
+	FVector DamageCollisionRelativeLocation = FVector::ZeroVector;
 		
 };

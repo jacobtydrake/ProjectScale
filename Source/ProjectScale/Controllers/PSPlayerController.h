@@ -25,6 +25,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnPauseButtonPressed();
 
+	// called from PSCharacter on death
+	UFUNCTION()
+	void OnCharacterDeath();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> PlayerCharacterMappingContext;
 

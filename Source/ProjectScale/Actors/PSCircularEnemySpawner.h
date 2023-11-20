@@ -41,10 +41,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
     float ZOffset { 0.0f };
 
-    /* amount direction in degrees that enemy direction can be randomly set. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
-    float DirectionTolerance = 1.0f;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
     TSubclassOf<APSEnemy> EnemyClass;
 

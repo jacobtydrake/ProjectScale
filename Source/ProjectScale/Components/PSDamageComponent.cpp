@@ -15,6 +15,7 @@ UPSDamageComponent::UPSDamageComponent()
     DamageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DamageCollision"));
     DamageCollision->SetBoxExtent(DamageCollisionSize);
     DamageCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    DamageCollision->SetRelativeLocation(DamageCollisionRelativeLocation);
     DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &UPSDamageComponent::OnDamageCollisionOverlap);
 }
 
@@ -48,6 +49,7 @@ void UPSDamageComponent::BeginPlay()
         if (UCapsuleComponent* CapsuleComponent = Cast<UCapsuleComponent>(OwnerActor->GetRootComponent()))
         {
             DamageCollision->AttachToComponent(CapsuleComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+            DamageCollision->SetRelativeLocation(DamageCollisionRelativeLocation);
         }
     }
 }
