@@ -78,4 +78,15 @@ public:
 
 private:
 
+	UPROPERTY(EditAnywhere)
+	float Lifespan = 25.0f; 
+	UPROPERTY(EditAnywhere)
+	float FlashTime = 8.0f;
+
+	FTimerHandle FlashTimerHandle;
+	FTimerHandle LifespanTimerHandle;
+
+	void StartFlashing();
+	void FlashEffect();
+
 };

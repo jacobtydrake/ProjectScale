@@ -25,6 +25,10 @@ APSPickupItem::APSPickupItem()
 void APSPickupItem::BeginPlay()
 {
     Super::BeginPlay();
+    
+    // start flashing based off total lifespan
+    GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &APSPickupItem::StartFlashing, Lifespan - FlashTime, false);
+    GetWorldTimerManager().SetTimer(LifespanTimerHandle, this, &APSPickupItem::OnPickedUp, Lifespan, false);
 }
 
 void APSPickupItem::Tick(float DeltaTime)
@@ -50,6 +54,9 @@ void APSPickupItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 void APSPickupItem::OnPickedUp()
 {
     // sound, anim, etc
+
+    GetWorldTimerManager().ClearTimer(FlashTimerHandle);
+    GetWorldTimerManager().ClearTimer(LifespanTimerHandle);
 
     Destroy();
 }
@@ -98,4 +105,15 @@ void APSPickupItem::SelectRandomItemType()
         UE_LOG(LogTemp, Warning, TEXT("Unknown pickup item type."));
         break;
     }
+}
+
+void APSPickupItem::StartFlashing()
+{
+    GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &APSPickupItem::FlashEffect, 0.25f, true);
+}
+
+void APSPickupItem::FlashEffect()
+{
+    bool bIsVisible = PickupFlipbook->IsVisible();
+    PickupFlipbook->SetVisibility(!bIsVisible);
 }
