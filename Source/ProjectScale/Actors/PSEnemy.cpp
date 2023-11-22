@@ -4,6 +4,7 @@
 #include "PaperFlipbookComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PSPickupItem.h"
+
 DEFINE_LOG_CATEGORY(PSEnemy);
 
 APSEnemy::APSEnemy()
@@ -47,6 +48,8 @@ APSEnemy::APSEnemy(FVector NewDirection)
 void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UpdateDropChances();
 }
 
 void APSEnemy::Tick(float DeltaTime)
@@ -57,13 +60,6 @@ void APSEnemy::Tick(float DeltaTime)
 	{
 		FVector NewLocation = GetActorLocation() + (MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime);
 		SetActorLocation(NewLocation);
-	}
-
-	if (FlipbookComp)
-	{
-		FVector Scale = FlipbookComp->GetComponentScale();
-		Scale.X = -FMath::Sign(MovementDirection.X) * FMath::Abs(Scale.X);
-		FlipbookComp->SetWorldScale3D(Scale);
 	}
 }
 
@@ -112,6 +108,12 @@ void APSEnemy::Die()
 
 	SetLifeSpan(DestructionDelay);
 }
+void APSEnemy::UpdateDropChances()
+{
+	CustomDropChances.Add(EPickupItemType::OrangeScale, 95.0f);
+	CustomDropChances.Add(EPickupItemType::Speed, 4.0f);
+	CustomDropChances.Add(EPickupItemType::Health, 1.0f);
+}
 void APSEnemy::SpawnPickupItem()
 {
 	if (PickupItemBlueprint)
@@ -119,7 +121,12 @@ void APSEnemy::SpawnPickupItem()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		GetWorld()->SpawnActor<APSPickupItem>(PickupItemBlueprint, GetActorLocation(), GetActorRotation(), SpawnParams);
+		APSPickupItem* PickupItem = GetWorld()->SpawnActor<APSPickupItem>(PickupItemBlueprint, GetActorLocation(), GetActorRotation(), SpawnParams);
+
+		if (PickupItem) 
+		{
+			PickupItem->InitializePickupItem(CustomDropChances);
+		}
 
 		UE_LOG(PSEnemy, Warning, TEXT("ItemSpawned"));
 	}

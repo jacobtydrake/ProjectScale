@@ -3,8 +3,8 @@
 #include "PSPickupItem.h"
 #include "Components/SphereComponent.h"
 #include "ProjectScale/Actors/PSCharacter.h"
-#include "PaperSpriteComponent.h"
-#include "PaperSprite.h"
+#include "PaperFlipbookComponent.h"
+#include "PaperFlipbook.h"
 
 // Sets default values
 APSPickupItem::APSPickupItem()
@@ -18,26 +18,24 @@ APSPickupItem::APSPickupItem()
     PickupCollision->SetupAttachment(RootComponent);
     PickupCollision->OnComponentBeginOverlap.AddDynamic(this, &APSPickupItem::OnOverlapBegin);
 
-    PickupSprite = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("PickupSprite"));
-    PickupSprite->SetupAttachment(RootComponent);
-
-    ItemChances.Add(EPickupItemType::Scale, 90.0f);
-    ItemChances.Add(EPickupItemType::Health, 3.0f);    
-    ItemChances.Add(EPickupItemType::Speed, 6.0f);
-    ItemChances.Add(EPickupItemType::ScreenWipe, 1.0f); 
-
+    PickupFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("PickupFlipbook"));
+    PickupFlipbook->SetupAttachment(RootComponent);
 }
 
 void APSPickupItem::BeginPlay()
 {
     Super::BeginPlay();
-    SelectRandomItemType();
 }
 
 void APSPickupItem::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
 
+void APSPickupItem::InitializePickupItem(const TMap<EPickupItemType, float>& NewItemChances)
+{
+    ItemChances = NewItemChances;
+    SelectRandomItemType();
 }
 
 void APSPickupItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -78,17 +76,22 @@ void APSPickupItem::SelectRandomItemType()
 
     switch (ItemType)
     {
-    case EPickupItemType::Scale:
-        PickupSprite->SetSprite(ScaleSpriteAsset);
+    case EPickupItemType::BlueScale:
+        PickupFlipbook->SetFlipbook(BlueScaleFlipbook);
+        UE_LOG(LogTemp, Warning, TEXT("BlueScale Spawned"));
+        break;
+    case EPickupItemType::OrangeScale:
+        PickupFlipbook->SetFlipbook(OrangeScaleFlipbook);
+        UE_LOG(LogTemp, Warning, TEXT("OrangeScale Spawned"));
         break;
     case EPickupItemType::Health:
-        PickupSprite->SetSprite(HealthSpriteAsset);
+        PickupFlipbook->SetFlipbook(HealthFlipbook);
         break;
     case EPickupItemType::Speed:
-        PickupSprite->SetSprite(SpeedSpriteAsset);
+        PickupFlipbook->SetFlipbook(SpeedFlipbook);
         break;
     case EPickupItemType::ScreenWipe:
-        PickupSprite->SetSprite(ScreenWipeSpriteAsset);
+        PickupFlipbook->SetFlipbook(ScreenWipeFlipbook);
         break;
     default:
         UE_LOG(LogTemp, Warning, TEXT("Unknown pickup item type."));

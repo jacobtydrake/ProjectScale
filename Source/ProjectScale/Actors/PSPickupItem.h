@@ -7,13 +7,14 @@
 #include "PSPickupItem.generated.h"
 
 class USphereComponent;
-class UPaperSpriteComponent;
-class UPaperSprite;
+class UPaperFlipbookComponent;
+class UPaperFlipbook;
 
 UENUM(BlueprintType)
 enum class EPickupItemType : uint8
 {
-	Scale UMETA(DisplayName = "Scale"),
+	BlueScale UMETA(DisplayName = "Blue Scale"),
+	OrangeScale UMETA(DisplayName = "Orange Scale"),
 	Health UMETA(DisplayName = "Health"),
 	Speed UMETA(DisplayName = "Speed"),
 	ScreenWipe UMETA(DisplayName = "ScreenWipe")
@@ -34,14 +35,16 @@ protected:
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* PickupMesh;
+	TObjectPtr<UStaticMeshComponent> PickupMesh;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	USphereComponent* PickupCollision;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UPaperSpriteComponent* PickupSprite;
-
+	TObjectPtr<USphereComponent> PickupCollision;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	TObjectPtr<UPaperFlipbookComponent> PickupFlipbook;
 
 public:	
+	UFUNCTION()
+	void InitializePickupItem(const TMap<EPickupItemType, float>& NewItemChances);
+
 	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -58,16 +61,19 @@ public:
 	TMap<EPickupItemType, float> ItemChances;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	UPaperSprite* ScaleSpriteAsset;
+	TObjectPtr<UPaperFlipbook> BlueScaleFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	UPaperSprite* HealthSpriteAsset;
+	TObjectPtr<UPaperFlipbook> OrangeScaleFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	UPaperSprite* SpeedSpriteAsset;
+	TObjectPtr<UPaperFlipbook> HealthFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	UPaperSprite* ScreenWipeSpriteAsset;
+	TObjectPtr<UPaperFlipbook> SpeedFlipbook;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TObjectPtr<UPaperFlipbook> ScreenWipeFlipbook;
 
 
 private:

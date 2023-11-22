@@ -98,7 +98,7 @@ private:
 	float CurrentHealth{ 0.0f };
 
 	UPROPERTY(EditAnywhere)
-	float MaxHealth{ 5.0f };
+	float MaxHealth{ 3.0f };
 
 	/****** START ATTACK PROPERTIES *****/
 	/* Attack Properties */

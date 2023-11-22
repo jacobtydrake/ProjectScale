@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ProjectScale/Components/PSDamageComponent.h"
 #include "TimerManager.h"
+#include "PSPickupItem.h"
 
 APSChasingEnemy::APSChasingEnemy()
 {
@@ -43,6 +44,14 @@ void APSChasingEnemy::Die()
     TimerManager->ClearTimer(AttackTimerHandle);
     TimerManager->ClearTimer(LaunchDelayTimerHandle);
     TimerManager->ClearTimer(LaunchTimerHandle);
+}
+
+void APSChasingEnemy::UpdateDropChances()
+{
+    CustomDropChances.Add(EPickupItemType::BlueScale, 90.0f);
+    CustomDropChances.Add(EPickupItemType::Speed, 6.0f);
+    CustomDropChances.Add(EPickupItemType::Health, 3.0f);
+    CustomDropChances.Add(EPickupItemType::ScreenWipe, 1.0f);
 }
 
 void APSChasingEnemy::UpdateChaseBehavior()

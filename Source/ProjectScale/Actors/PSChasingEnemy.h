@@ -29,6 +29,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Die();
+	virtual void UpdateDropChances() override;
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

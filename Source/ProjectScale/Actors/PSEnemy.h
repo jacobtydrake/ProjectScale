@@ -14,6 +14,8 @@ class UPaperFlipbookComponent;
 class UMaterialInstanceDynamic;
 class APSPickupItem;
 
+enum class EPickupItemType : uint8;
+
 UCLASS()
 class PROJECTSCALE_API APSEnemy : public AActor, public IPSCombatInterface
 {
@@ -29,7 +31,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const bool GetIsDead() const { return bIsDead; }
 	UFUNCTION(BlueprintCallable)
-	const FVector GetMovementDirection() const { return MovementDirection; }
+	const FVector2D Get2DMovementDirection() const { return FVector2D(MovementDirection.X, -MovementDirection.Y); }
+	
 
 	UFUNCTION(BlueprintCallable)
 	void InitializeDirection(const FVector& NewDirection);
@@ -56,8 +59,11 @@ protected:
 
 
 	/**/
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	virtual void Die();
+
+	UFUNCTION()
+	virtual void UpdateDropChances();
 
 	UFUNCTION()
 	void SpawnPickupItem();
@@ -88,5 +94,8 @@ protected:
 
 	UPROPERTY()
 	bool bIsDead{ false };
+
+	UPROPERTY(EditAnywhere)
+	TMap<EPickupItemType, float> CustomDropChances;
 
 };
