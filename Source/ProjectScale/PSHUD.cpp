@@ -44,6 +44,8 @@ void APSHUD::InitializeMainLevelUI()
     if (PauseWidgetClass)
     {
         PauseWidgetInstance = CreateWidget<UPSPauseScreen>(GetWorld(), PauseWidgetClass);
+        PauseWidgetInstance->AddToViewport();
+        PauseWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
     }
     else
     {
@@ -57,11 +59,11 @@ void APSHUD::TogglePauseScreen()
 
     if (bIsPauseScreenVisible)
     {
-        PauseWidgetInstance->AddToViewport();
+        PauseWidgetInstance->SetVisibility(ESlateVisibility::Visible);
     }
     else
     {
-        PauseWidgetInstance->RemoveFromParent();
+        PauseWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
     }
 }
 
