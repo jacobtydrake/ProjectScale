@@ -76,12 +76,12 @@ protected:
 	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterialInstance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float MaxHealth{ 1.0f };
+	int32 MaxHealth{ 1 };
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
-	float CurrentHealth;
+	int32 CurrentHealth;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float MovementSpeed{ 100.0f };
+	float MovementSpeed{ 100 };
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	FVector MovementDirection{ 1,0,0 };

@@ -2,4 +2,14 @@
 
 
 #include "PSHUDWidget.h"
+#include "Components/Image.h"
 
+void UPSHUDWidget::UpdateHealth(int32 NewHealth)
+{
+	if (Image1 && Image2 && Image3)
+	{
+		Image1->SetVisibility(NewHealth >= 1 ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		Image2->SetVisibility(NewHealth >= 2 ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		Image3->SetVisibility(NewHealth >= 3 ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
+}

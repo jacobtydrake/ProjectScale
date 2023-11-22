@@ -14,6 +14,9 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 class UPSDamageComponent;
+class APSHUD;
+
+enum class EPickupItemType : uint8;
 
 UCLASS()
 class PROJECTSCALE_API APSCharacter : public APaperCharacter, public IPSCombatInterface
@@ -36,6 +39,9 @@ public:
 	const bool GetIsAttacking() const { return bIsAttacking; }
 	UFUNCTION(BlueprintCallable)
 	const bool GetPlaySecondAttack() const { return bPlaySecondAttack; }
+
+	UFUNCTION()
+	void OnItemPickup(EPickupItemType ItemType);
 
 protected:
 	/* Overrides */
@@ -95,10 +101,10 @@ private:
 
 
 	UPROPERTY()
-	float CurrentHealth{ 0.0f };
+	int32 CurrentHealth{ 0 };
 
 	UPROPERTY(EditAnywhere)
-	float MaxHealth{ 3.0f };
+	int32 MaxHealth{ 3 };
 
 	/****** START ATTACK PROPERTIES *****/
 	/* Attack Properties */
@@ -141,7 +147,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AttackThrustPower = 2000.0f;
 	UPROPERTY(EditAnywhere)
-	float ComboAttackThrustPower = 1000.0f;
+	float ComboAttackThrustPower = 1400.0f;
 
 	/* flag for disabling movement while attacking or dying */
 	bool bIsMovementAllowed{ true };
@@ -152,4 +158,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DamageCooldown{ 1.0f };
 	float LastDamageTime{ 0.0f };
+
+
+	/**/
+	TObjectPtr<APSHUD> CachedHUD;
 };

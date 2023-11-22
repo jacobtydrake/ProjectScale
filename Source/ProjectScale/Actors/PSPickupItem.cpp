@@ -42,6 +42,7 @@ void APSPickupItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 {
     if (APSCharacter* PlayerCharacter = Cast<APSCharacter>(OtherActor))
     {
+        PlayerCharacter->OnItemPickup(ItemType);
         OnPickedUp();
     }
 }

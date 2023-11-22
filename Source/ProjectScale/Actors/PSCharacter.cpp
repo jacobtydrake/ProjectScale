@@ -11,6 +11,9 @@
 #include "ProjectScale/Components/PSDamageComponent.h"
 #include "Components/BoxComponent.h"
 #include "ProjectScale/Controllers/PSPlayerController.h"
+#include "PSPickupItem.h"
+#include "ProjectScale/PSHUD.h"
+#include "ProjectScale/Controllers/PSPlayerController.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -47,6 +50,11 @@ void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(PSCharacter, Display, TEXT("Player Health: %f"), CurrentHealth);
+
+	if (TObjectPtr<APSPlayerController> PSPlayerController = Cast<APSPlayerController>(GetWorld()->GetFirstPlayerController()))
+	{
+		CachedHUD = PSPlayerController->GetPSHUD();
+	}
 }
 
 void APSCharacter::Tick(float DeltaTime)
@@ -75,6 +83,11 @@ void APSCharacter::TakeDamage_Implementation(const float DamageAmount)
 
 		CurrentHealth -= DamageAmount;
 
+		if (CachedHUD)
+		{
+			CachedHUD->UpdateHealthWidget(CurrentHealth);
+		}
+
 		if (CurrentHealth <= 0.0f)
 		{
 			Die();
@@ -100,16 +113,6 @@ void APSCharacter::Move(const FInputActionValue& Value)
 	bIsHoldingMove = true;
 	MovementVector = Value.Get<FVector2D>();
 
-	const FVector CameraForward = CameraComp->GetForwardVector();
-	const FVector CameraRight = CameraComp->GetRightVector();
-
-	// project horizontally
-	const FVector Forward = FVector(CameraForward.X, CameraForward.Y, 0.f).GetSafeNormal();
-	const FVector Right = FVector(CameraRight.X, CameraRight.Y, 0.f).GetSafeNormal();
-
-	AddMovementInput(Forward, MovementVector.Y);
-	AddMovementInput(Right, MovementVector.X);
-
 	if (MovementVector.X > 0)
 	{
 		LastMoveDirection = ELastMoveDirection::Right;
@@ -128,6 +131,16 @@ void APSCharacter::Move(const FInputActionValue& Value)
 	{
 		LastMoveDirection = ELastMoveDirection::Down;
 	}
+
+	const FVector CameraForward = CameraComp->GetForwardVector();
+	const FVector CameraRight = CameraComp->GetRightVector();
+
+	// project horizontally
+	const FVector Forward = FVector(CameraForward.X, CameraForward.Y, 0.f).GetSafeNormal();
+	const FVector Right = FVector(CameraRight.X, CameraRight.Y, 0.f).GetSafeNormal();
+
+	AddMovementInput(Forward, MovementVector.Y);
+	AddMovementInput(Right, MovementVector.X);
 }
 
 // flags are set to control animation states in ABP_BuffBaby state machine
@@ -285,4 +298,35 @@ void APSCharacter::Die()
 	{
 		PC->OnCharacterDeath();
 	}
+}
+
+void APSCharacter::OnItemPickup(EPickupItemType ItemType)
+{
+	switch (ItemType)
+	{
+	case EPickupItemType::OrangeScale:
+
+		break;
+
+	case EPickupItemType::BlueScale:
+
+		break;
+	
+	case EPickupItemType::Health:
+
+		CurrentHealth += 1;
+
+		if (CachedHUD)
+		{
+			CachedHUD->UpdateHealthWidget(CurrentHealth);
+		}
+
+		break;
+
+	case EPickupItemType::Speed:
+
+		break;
+
+	}
+
 }

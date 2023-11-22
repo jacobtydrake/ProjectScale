@@ -67,4 +67,12 @@ void APSHUD::TogglePauseScreen()
     }
 }
 
+void APSHUD::UpdateHealthWidget(int32 NewHealth)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->UpdateHealth(NewHealth);
+    }
+}
+
 

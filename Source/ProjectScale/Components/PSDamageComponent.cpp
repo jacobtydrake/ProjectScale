@@ -29,7 +29,7 @@ void UPSDamageComponent::ActivateDamageCollision()
     DamageCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     DamageCollision->SetGenerateOverlapEvents(true);
 
-    UE_LOG(LogTemp, Warning, TEXT("ActivateDamageCollision"));
+    bIsDamageCollisionActive = true;
 }
 
 void UPSDamageComponent::DeactivateDamageCollision()
@@ -37,7 +37,7 @@ void UPSDamageComponent::DeactivateDamageCollision()
     DamageCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     DamageCollision->SetGenerateOverlapEvents(false);
 
-    UE_LOG(LogTemp, Warning, TEXT("DeactivateDamageCollision"));
+    bIsDamageCollisionActive = false;
 }
 
 void UPSDamageComponent::BeginPlay()

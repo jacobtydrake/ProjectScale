@@ -29,7 +29,11 @@ public:
 	void InitializeMainLevelUI();
 
 	/**/
+	UFUNCTION()
 	void TogglePauseScreen();
+
+	UFUNCTION()
+	void UpdateHealthWidget(int32 NewHealth);
 
 private:
 	TSubclassOf<UPSHUDWidget> HUDWidgetClass;

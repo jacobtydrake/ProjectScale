@@ -49,6 +49,9 @@ protected:
 	UFUNCTION()
 	void HandleLaunch();
 
+	UFUNCTION()
+	void ToggleDamageCollision();
+
 	/* TODO: cleanup header */
 	UPROPERTY(EditAnywhere, Category = "Chase Behavior")
 	bool bHasInfiniteDetectionRange{ false };
@@ -66,7 +69,7 @@ protected:
 	float AttackThrustPower{ 1.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float TotalAttackDuration{ 1.5f };
+	float TotalAttackDuration{ 1.4f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float AttackHurtDuration{ 0.2f };
@@ -96,6 +99,7 @@ private:
 	FTimerHandle AttackTimerHandle;
 	FTimerHandle LaunchDelayTimerHandle;
 	FTimerHandle LaunchTimerHandle;
+	FTimerHandle DamageCollisionTimerHandle;
 
 	bool bIsLaunching{ false };
 };

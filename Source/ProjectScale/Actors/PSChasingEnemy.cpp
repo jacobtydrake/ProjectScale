@@ -94,8 +94,8 @@ void APSChasingEnemy::EndAttack()
 
 void APSChasingEnemy::StartLaunch()
 {
-    DamageComp->ActivateDamageCollision();
     bIsLaunching = true;
+    GetWorldTimerManager().SetTimer(DamageCollisionTimerHandle, this, &APSChasingEnemy::ToggleDamageCollision,  .2, false);
     GetWorldTimerManager().SetTimer(LaunchTimerHandle, this, &APSChasingEnemy::HandleLaunch, 0.016f, true);
 }
 
@@ -115,5 +115,17 @@ void APSChasingEnemy::HandleLaunch()
             DamageComp->DeactivateDamageCollision();
             GetWorldTimerManager().ClearTimer(LaunchTimerHandle);
         }
+    }
+}
+
+void APSChasingEnemy::ToggleDamageCollision()
+{
+    if (DamageComp->GetIsDamageCollisionActive())
+    {
+        DamageComp->DeactivateDamageCollision();
+    }
+    else
+    {
+        DamageComp->ActivateDamageCollision();
     }
 }

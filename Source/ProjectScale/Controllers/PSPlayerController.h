@@ -29,10 +29,14 @@ public:
 	UFUNCTION()
 	void OnCharacterDeath();
 
+	UFUNCTION()
+	APSHUD* GetPSHUD() const { return CachedHUD; }
+
+
+protected:
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> PlayerCharacterMappingContext;
-
-private:
 
 	TObjectPtr<APSHUD> CachedHUD;
 };

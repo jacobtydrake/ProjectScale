@@ -16,6 +16,10 @@ APSEnemy::APSEnemy()
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	RootComponent = CapsuleComp;
 
+	const float CapsuleRadius = 35.0f; 
+	const float CapsuleHalfHeight = 44.0f;
+	CapsuleComp->SetCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+
 	FlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComponent"));
 	FlipbookComp->SetupAttachment(RootComponent);
 	FlipbookComp->bOwnerNoSee = false;
@@ -58,9 +62,14 @@ void APSEnemy::Tick(float DeltaTime)
 
 	if (bShouldMove)
 	{
-		FVector NewLocation = GetActorLocation() + (MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime);
-		SetActorLocation(NewLocation);
+		//FVector NewLocation = GetActorLocation() + (MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime);
+		//SetActorLocation(NewLocation);
+
+		FVector Offset = MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime;
+		AddActorWorldOffset(Offset, true);
 	}
+
+
 }
 
 void APSEnemy::TakeDamage_Implementation(const float DamageAmount)

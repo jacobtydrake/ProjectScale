@@ -25,6 +25,8 @@ public:
 	UFUNCTION()
 	void SetTeamTag(const FName TeamTagName) { TeamTag = TeamTagName; }
 
+	const bool GetIsDamageCollisionActive() const { return bIsDamageCollisionActive;  }
+
 	TObjectPtr<UBoxComponent> GetDamageCollisionBox();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void ActivateDamageCollision();
@@ -52,5 +54,7 @@ private:
 	// Editable relative location of the damage box
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage Collision", meta = (AllowPrivateAccess = "true"))
 	FVector DamageCollisionRelativeLocation = FVector::ZeroVector;
+
+	bool bIsDamageCollisionActive{ false };
 		
 };
