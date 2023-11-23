@@ -10,7 +10,6 @@
 
 APSChasingEnemy::APSChasingEnemy()
 {
-    //Tags.Add("Enemy");
     DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
     DamageComp->SetTeamTag("Enemy");
 }
@@ -40,6 +39,11 @@ void APSChasingEnemy::Tick(float DeltaTime)
 void APSChasingEnemy::Die()
 {
     Super::Die();
+
+    if (DamageComp)
+    {
+        DamageComp->DeactivateDamageCollision();
+    }
 
     TimerManager->ClearTimer(AttackTimerHandle);
     TimerManager->ClearTimer(LaunchDelayTimerHandle);

@@ -15,6 +15,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UPSDamageComponent;
 class APSHUD;
+class UPSCharacterWidgetComponent;
 
 enum class EPickupItemType : uint8;
 
@@ -90,6 +91,8 @@ protected:
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPSDamageComponent> DamageComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPSCharacterWidgetComponent> PSWidgetComp;
 
 private:
 

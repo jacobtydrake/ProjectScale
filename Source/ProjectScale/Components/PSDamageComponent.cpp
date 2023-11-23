@@ -58,20 +58,47 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    if (DamageCollision->IsCollisionEnabled())
+    AActor* Owner = GetOwner();
+    if (Owner)
     {
-        DrawDebugBox
-        (
-            GetWorld(),
-            DamageCollision->GetComponentLocation(),
-            DamageCollision->GetScaledBoxExtent(),
-            FQuat(DamageCollision->GetComponentRotation()),
-            FColor::Red,
-            false,
-            0.01f,
-            10,
-            2
-        );
+        FVector MovementDirection = Owner->GetVelocity().GetSafeNormal();
+        FVector NewRelativeLocation = FVector::ZeroVector;
+
+        float HorizontalOffset = 35.f;
+        float VerticalOffset = 35.f;
+        float MovementThreshold = 0.5f;
+
+        // Adjust the relative location based on movement direction with threshold
+        if (FMath::Abs(MovementDirection.X) > MovementThreshold)
+        {
+            NewRelativeLocation.X = MovementDirection.X > 0 ? HorizontalOffset : -HorizontalOffset;
+        }
+
+        if (FMath::Abs(MovementDirection.Y) > MovementThreshold)
+        {
+            NewRelativeLocation.Y = MovementDirection.Y > 0 ? VerticalOffset : -VerticalOffset;
+        }
+
+        // Update the damage collision's location
+        DamageCollision->SetRelativeLocation(NewRelativeLocation);
+
+
+        // Debug visualization
+        if (DamageCollision->IsCollisionEnabled())
+        {
+            DrawDebugBox
+            (
+                GetWorld(),
+                DamageCollision->GetComponentLocation(),
+                DamageCollision->GetScaledBoxExtent(),
+                FQuat(DamageCollision->GetComponentRotation()),
+                FColor::Red,
+                false,
+                -1.f, // Duration
+                0,
+                2
+            );
+        }
     }
 }
 

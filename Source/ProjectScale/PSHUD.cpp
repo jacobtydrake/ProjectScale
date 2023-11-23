@@ -11,11 +11,19 @@ APSHUD::APSHUD()
     {
         HUDWidgetClass = HudWidgetObj.Class;
     }
-    static ConstructorHelpers::FClassFinder<UUserWidget> PauseWidgetObj(TEXT("/Game/ProjectScale/Blueprints/Widgets/WBP_PSPauseScreen.WBP_PSPauseScreen_C"));
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("APSHUD() failed to load WBP_PSHUDWidget. Check file path."))
+    }
+    static ConstructorHelpers::FClassFinder<UUserWidget> PauseWidgetObj(TEXT("/Game/ProjectScale/Blueprints/Widgets/Menus/WBP_PSPauseScreen.WBP_PSPauseScreen_C"));
 
     if (PauseWidgetObj.Succeeded())
     {
         PauseWidgetClass = PauseWidgetObj.Class;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("APSHUD() failed to load WBP_PSPauseScreen. Check file path."))
     }
 }
 

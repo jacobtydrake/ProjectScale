@@ -68,15 +68,11 @@ void APSPlayerController::OnCharacterDeath()
 	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
 
 
-	//// Display a death screen or transition to a death state
+	//
 	//if (CachedHUD)
 	//{
-	//	CachedHUD->ShowDeathScreen(); // Example function call to show death screen
+	//	CachedHUD->ShowDeathScreen();
 	//}
-
-	//// Optionally, set a timer to restart the level or go back to the main menu
-	//FTimerHandle UnusedHandle;
-	//GetWorldTimerManager().SetTimer(UnusedHandle, this, &APSPlayerController::RestartLevel, RestartDelay, false);
 
 	UE_LOG(LogTemp, Display, TEXT("void APSPlayerController::OnCharacterDeath()"));
 }

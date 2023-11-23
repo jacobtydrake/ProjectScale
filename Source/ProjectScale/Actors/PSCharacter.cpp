@@ -14,6 +14,7 @@
 #include "PSPickupItem.h"
 #include "ProjectScale/PSHUD.h"
 #include "ProjectScale/Controllers/PSPlayerController.h"
+#include "ProjectScale/Components/PSCharacterWidgetComponent.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -26,11 +27,10 @@ APSCharacter::APSCharacter()
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->TargetArmLength = 200.0f;
-	//SpringArmComp->SetRelativeRotation(FRotator(-90.f, -90.f, 0.f));
 	SpringArmComp->bUsePawnControlRotation = false;
 	SpringArmComp->bDoCollisionTest = false;
 
-	// Create the follow camera
+	// Create the follow camera - make static? maybe?
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
@@ -38,6 +38,17 @@ APSCharacter::APSCharacter()
 	// Create and attach the damage component
 	DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
 	DamageComp->SetTeamTag("Player");
+
+	PSWidgetComp = CreateDefaultSubobject<UPSCharacterWidgetComponent>(TEXT("PSWidgetComponent"));
+	PSWidgetComp->SetupAttachment(RootComponent);
+
+	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f); //TODO: make var
+	PSWidgetComp->SetRelativeRotation(NewRotation);
+
+	FVector WidgetOffset = FVector(0.0f, 0.0f, 120.0);  //TODO: make var
+	PSWidgetComp->SetRelativeLocation(WidgetOffset);
+
+	PSWidgetComp->SetCastShadow(false);
 
 	// ComboWindow must at least be the length of the first attack
 	ComboWindowDurationOffset += FirstAttackAnimationLength;
@@ -49,7 +60,6 @@ APSCharacter::APSCharacter()
 void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(PSCharacter, Display, TEXT("Player Health: %f"), CurrentHealth);
 
 	if (TObjectPtr<APSPlayerController> PSPlayerController = Cast<APSPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
