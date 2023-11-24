@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class APSHUD;
+class UPSScoreController;
 
 /**
  * 
@@ -29,8 +30,11 @@ public:
 	UFUNCTION()
 	void OnCharacterDeath();
 
+	/* Getters */
 	UFUNCTION()
 	APSHUD* GetPSHUD() const { return CachedHUD; }
+	UFUNCTION()
+	UPSScoreController* GetPSScoreController() const { return PSScoreController;  }
 
 
 protected:
@@ -38,5 +42,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> PlayerCharacterMappingContext;
 
+	UPROPERTY()
 	TObjectPtr<APSHUD> CachedHUD;
+
+	UPROPERTY()
+	TObjectPtr<UPSScoreController> PSScoreController;
+
 };

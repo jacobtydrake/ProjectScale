@@ -7,6 +7,7 @@
 #include "PaperFlipbook.h"
 #include "ProjectScale/Components/PSPickupItemWidgetComponent.h"
 #include "Components/SceneComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 APSPickupItem::APSPickupItem()
@@ -19,12 +20,16 @@ APSPickupItem::APSPickupItem()
     PickupCollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("PickupCollision"));
     PickupCollisionComp->SetupAttachment(RootComponent);
     PickupCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APSPickupItem::OnOverlapBegin);
+    PickupCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     PickupFlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("PickupFlipbook"));
     PickupFlipbookComp->SetupAttachment(RootComponent);
 
     PSPickupItemWidgetComp = CreateDefaultSubobject<UPSPickupItemWidgetComponent>(TEXT("PSPickupItemWidget"));
     PSPickupItemWidgetComp->SetupAttachment(RootComponent);
+    PSPickupItemWidgetComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    PSPickupItemWidgetComp->SetCastShadow(false);
+    PSPickupItemWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 
     const FRotator NewRotation = FRotator(30.0f, 90.0f, 0.0f); //TODO: make var
     PSPickupItemWidgetComp->SetRelativeRotation(NewRotation);
@@ -105,13 +110,11 @@ void APSPickupItem::SelectRandomItemType()
 
     switch (ItemType)
     {
-    case EPickupItemType::BlueScale:
-        PickupFlipbookComp->SetFlipbook(BlueScaleFlipbook);
-        UE_LOG(LogTemp, Warning, TEXT("BlueScale Spawned"));
-        break;
     case EPickupItemType::OrangeScale:
         PickupFlipbookComp->SetFlipbook(OrangeScaleFlipbook);
-        UE_LOG(LogTemp, Warning, TEXT("OrangeScale Spawned"));
+        break;
+    case EPickupItemType::BlueScale:
+        PickupFlipbookComp->SetFlipbook(BlueScaleFlipbook);
         break;
     case EPickupItemType::Health:
         PickupFlipbookComp->SetFlipbook(HealthFlipbook);
@@ -126,6 +129,11 @@ void APSPickupItem::SelectRandomItemType()
         UE_LOG(LogTemp, Warning, TEXT("Unknown pickup item type."));
         break;
     }
+}
+
+void APSPickupItem::EnableCollision()
+{
+    PickupCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void APSPickupItem::StartFlashing()

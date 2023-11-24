@@ -59,6 +59,10 @@ public:
 	UFUNCTION()
 	void SelectRandomItemType();
 
+	UFUNCTION()
+	void EnableCollision();
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	EPickupItemType ItemType;
 

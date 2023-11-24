@@ -16,6 +16,7 @@ class USpringArmComponent;
 class UPSDamageComponent;
 class APSHUD;
 class UPSCharacterWidgetComponent;
+class UPSScoreController;
 
 enum class EPickupItemType : uint8;
 
@@ -162,7 +163,9 @@ private:
 	float DamageCooldown{ 1.0f };
 	float LastDamageTime{ 0.0f };
 
-
-	/**/
+	/* Cached */
+	UPROPERTY()
 	TObjectPtr<APSHUD> CachedHUD;
+	UPROPERTY()
+	TObjectPtr<UPSScoreController> CachedScoreController;
 };

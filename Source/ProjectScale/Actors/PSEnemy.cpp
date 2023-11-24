@@ -68,8 +68,6 @@ void APSEnemy::Tick(float DeltaTime)
 		FVector Offset = MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime;
 		AddActorWorldOffset(Offset, true);
 	}
-
-
 }
 
 void APSEnemy::TakeDamage_Implementation(const float DamageAmount)
@@ -135,6 +133,7 @@ void APSEnemy::SpawnPickupItem()
 		if (PickupItem) 
 		{
 			PickupItem->InitializePickupItem(CustomDropChances);
+			PickupItem->EnableCollision();
 		}
 
 		UE_LOG(PSEnemy, Warning, TEXT("ItemSpawned"));

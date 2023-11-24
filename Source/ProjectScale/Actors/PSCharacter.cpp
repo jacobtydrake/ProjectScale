@@ -15,6 +15,7 @@
 #include "ProjectScale/PSHUD.h"
 #include "ProjectScale/Controllers/PSPlayerController.h"
 #include "ProjectScale/Components/PSCharacterWidgetComponent.h"
+#include "ProjectScale/Controllers/PSScoreController.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -42,6 +43,8 @@ APSCharacter::APSCharacter()
 
 	PSWidgetComp = CreateDefaultSubobject<UPSCharacterWidgetComponent>(TEXT("PSWidgetComponent"));
 	PSWidgetComp->SetupAttachment(RootComponent);
+	PSWidgetComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	PSWidgetComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
 	const FRotator NewRotation = FRotator(30.0f, 90.0f, 0.0f); //TODO: make var
 	PSWidgetComp->SetRelativeRotation(NewRotation);
@@ -66,6 +69,7 @@ void APSCharacter::BeginPlay()
 	if (TObjectPtr<APSPlayerController> PSPlayerController = Cast<APSPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
 		CachedHUD = PSPlayerController->GetPSHUD();
+		CachedScoreController = PSPlayerController->GetPSScoreController();
 	}
 }
 
@@ -318,9 +322,13 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 	{
 	case EPickupItemType::OrangeScale:
 
+		CachedScoreController->AddItemToScore(ItemType);
+
 		break;
 
 	case EPickupItemType::BlueScale:
+
+		CachedScoreController->AddItemToScore(ItemType);
 
 		break;
 	
@@ -345,5 +353,4 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 		break;
 
 	}
-
 }

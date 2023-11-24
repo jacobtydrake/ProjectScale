@@ -8,6 +8,7 @@
 
 class UPSHUDWidget;
 class UPSPauseScreen;
+class UPSScoreScreen;
 
 /**
  * 
@@ -35,12 +36,17 @@ public:
 	UFUNCTION()
 	void UpdateHealthWidget(int32 NewHealth);
 
+	UFUNCTION()
+	void DisplayScoreScreen(const TMap<EPickupItemType, int32>& ItemCounts, int32 TotalScore);
+
 private:
 	TSubclassOf<UPSHUDWidget> HUDWidgetClass;
 	TSubclassOf<UPSPauseScreen> PauseWidgetClass;
+	TSubclassOf<UPSScoreScreen> ScoreScreenWidgetClass;
 
 	TObjectPtr<UPSHUDWidget> HUDWidgetInstance;
 	TObjectPtr<UPSPauseScreen> PauseWidgetInstance;
+	TObjectPtr<UPSScoreScreen> ScoreScreenWidgetInstance;
 
 	bool bIsPauseScreenVisible{ false };
 };

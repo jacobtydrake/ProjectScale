@@ -4,6 +4,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "ProjectScale/PSHUD.h"
 #include "Kismet/GameplayStatics.h"
+#include "PSScoreController.h"
+#include "ProjectScale/Actors/PSPickupItem.h"
 
 void APSPlayerController::BeginPlay()
 {
@@ -22,6 +24,8 @@ void APSPlayerController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to get PSHUD"));
 	}
+
+	PSScoreController = NewObject<UPSScoreController>(this);
 }
 
 void APSPlayerController::OnPauseButtonPressed()
@@ -55,9 +59,6 @@ void APSPlayerController::OnPauseButtonPressed()
 
 void APSPlayerController::OnCharacterDeath()
 {
-	// Pause the game
-	/*SetPause(true);*/
-
 	// Change input mode to UI only
 	FInputModeUIOnly InputModeData;
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
@@ -65,14 +66,16 @@ void APSPlayerController::OnCharacterDeath()
 
 	bShowMouseCursor = true;
 
-	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+	//UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
 
+	SetPause(true);
 
-	//
-	//if (CachedHUD)
-	//{
-	//	CachedHUD->ShowDeathScreen();
-	//}
+	if (PSScoreController && CachedHUD)
+	{
+		int32 TotalScore = PSScoreController->GetTotalScore();
+		TMap<EPickupItemType, int32> ItemCounts = PSScoreController->GetItemPickupCounts();
+		CachedHUD->DisplayScoreScreen(ItemCounts, TotalScore);
+	}
 
 	UE_LOG(LogTemp, Display, TEXT("void APSPlayerController::OnCharacterDeath()"));
 }
