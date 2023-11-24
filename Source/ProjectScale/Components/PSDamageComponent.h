@@ -33,6 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void DeactivateDamageCollision();
 
+	void ToggleRelativePositioning(const bool bShouldActivate);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> DamageCollision;
@@ -56,5 +58,7 @@ private:
 	FVector DamageCollisionRelativeLocation = FVector::ZeroVector;
 
 	bool bIsDamageCollisionActive{ false };
+
+	bool bIsRelativePositioningActive{ false };
 		
 };

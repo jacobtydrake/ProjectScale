@@ -9,6 +9,8 @@
 class USphereComponent;
 class UPaperFlipbookComponent;
 class UPaperFlipbook;
+class UPSPickupItemWidgetComponent;
+class USceneComponent;
 
 UENUM(BlueprintType)
 enum class EPickupItemType : uint8
@@ -35,11 +37,14 @@ protected:
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> PickupMesh;
+	TObjectPtr<USceneComponent> SceneComp;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<USphereComponent> PickupCollision;
+	TObjectPtr<USphereComponent> PickupCollisionComp;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<UPaperFlipbookComponent> PickupFlipbook;
+	TObjectPtr<UPaperFlipbookComponent> PickupFlipbookComp;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	TObjectPtr<UPSPickupItemWidgetComponent> PSPickupItemWidgetComp;
+
 
 public:	
 	UFUNCTION()

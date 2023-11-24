@@ -129,7 +129,7 @@ private:
 
 	/* Time required to pass before character can attack again. */
 	UPROPERTY(EditAnywhere)
-	float AttackCooldown{ 0.33f };
+	float AttackCooldown{ 0.5f };
 
 	/* Used to track the time between inputs for the AttackCooldown. */
 	float LastAttackEndTime{ 0.0f };

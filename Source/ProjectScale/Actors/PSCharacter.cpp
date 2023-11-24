@@ -38,17 +38,19 @@ APSCharacter::APSCharacter()
 	// Create and attach the damage component
 	DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
 	DamageComp->SetTeamTag("Player");
+	DamageComp->ToggleRelativePositioning(true);
 
 	PSWidgetComp = CreateDefaultSubobject<UPSCharacterWidgetComponent>(TEXT("PSWidgetComponent"));
 	PSWidgetComp->SetupAttachment(RootComponent);
 
-	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f); //TODO: make var
+	const FRotator NewRotation = FRotator(30.0f, 90.0f, 0.0f); //TODO: make var
 	PSWidgetComp->SetRelativeRotation(NewRotation);
 
-	FVector WidgetOffset = FVector(0.0f, 0.0f, 120.0);  //TODO: make var
+	const FVector WidgetOffset = FVector(0.0f, 0.0f, 120.0);  //TODO: make var
 	PSWidgetComp->SetRelativeLocation(WidgetOffset);
 
 	PSWidgetComp->SetCastShadow(false);
+	PSWidgetComp->SetVisibility(false);
 
 	// ComboWindow must at least be the length of the first attack
 	ComboWindowDurationOffset += FirstAttackAnimationLength;
@@ -325,6 +327,11 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 	case EPickupItemType::Health:
 
 		CurrentHealth += 1;
+
+		if (CurrentHealth > MaxHealth)
+		{
+			CurrentHealth = MaxHealth;
+		}
 
 		if (CachedHUD)
 		{

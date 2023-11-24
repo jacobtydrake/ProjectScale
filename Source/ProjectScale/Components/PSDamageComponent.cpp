@@ -40,6 +40,11 @@ void UPSDamageComponent::DeactivateDamageCollision()
     bIsDamageCollisionActive = false;
 }
 
+void UPSDamageComponent::ToggleRelativePositioning(const bool bShouldActivate)
+{
+    bIsRelativePositioningActive = true;
+}
+
 void UPSDamageComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -58,11 +63,17 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    AActor* Owner = GetOwner();
-    if (Owner)
+    if (bIsRelativePositioningActive && GetOwner())
     {
+        AActor* Owner = GetOwner();
         FVector MovementDirection = Owner->GetVelocity().GetSafeNormal();
         FVector NewRelativeLocation = FVector::ZeroVector;
+
+        if (MovementDirection == FVector::ZeroVector)
+        {
+            DeactivateDamageCollision();
+            return;
+        }
 
         float HorizontalOffset = 35.f;
         float VerticalOffset = 35.f;
@@ -82,23 +93,23 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
         // Update the damage collision's location
         DamageCollision->SetRelativeLocation(NewRelativeLocation);
 
+    }
 
-        // Debug visualization
-        if (DamageCollision->IsCollisionEnabled())
-        {
-            DrawDebugBox
-            (
-                GetWorld(),
-                DamageCollision->GetComponentLocation(),
-                DamageCollision->GetScaledBoxExtent(),
-                FQuat(DamageCollision->GetComponentRotation()),
-                FColor::Red,
-                false,
-                -1.f, // Duration
-                0,
-                2
-            );
-        }
+    // Debug visualization
+    if (DamageCollision->IsCollisionEnabled())
+    {
+        DrawDebugBox
+        (
+            GetWorld(),
+            DamageCollision->GetComponentLocation(),
+            DamageCollision->GetScaledBoxExtent(),
+            FQuat(DamageCollision->GetComponentRotation()),
+            FColor::Red,
+            false,
+            -1.f, // Duration
+            0,
+            2
+        );
     }
 }
 

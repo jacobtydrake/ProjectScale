@@ -35,7 +35,7 @@ void UPSCharacterWidgetComponent::InitializeWidget()
         if (WidgetInst)
         {
             SetWidget(WidgetInst);
-            WidgetInst->SetVisibility(ESlateVisibility::Visible);
+            WidgetInst->SetVisibility(ESlateVisibility::Collapsed);
         }
         else
         {

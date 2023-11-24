@@ -5,21 +5,37 @@
 #include "ProjectScale/Actors/PSCharacter.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
+#include "ProjectScale/Components/PSPickupItemWidgetComponent.h"
+#include "Components/SceneComponent.h"
 
 // Sets default values
 APSPickupItem::APSPickupItem()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PickupMesh"));
-    RootComponent = PickupMesh;
+    SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+    RootComponent = SceneComp;
 
-    PickupCollision = CreateDefaultSubobject<USphereComponent>(TEXT("PickupCollision"));
-    PickupCollision->SetupAttachment(RootComponent);
-    PickupCollision->OnComponentBeginOverlap.AddDynamic(this, &APSPickupItem::OnOverlapBegin);
+    PickupCollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("PickupCollision"));
+    PickupCollisionComp->SetupAttachment(RootComponent);
+    PickupCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &APSPickupItem::OnOverlapBegin);
 
-    PickupFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("PickupFlipbook"));
-    PickupFlipbook->SetupAttachment(RootComponent);
+    PickupFlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("PickupFlipbook"));
+    PickupFlipbookComp->SetupAttachment(RootComponent);
+
+    PSPickupItemWidgetComp = CreateDefaultSubobject<UPSPickupItemWidgetComponent>(TEXT("PSPickupItemWidget"));
+    PSPickupItemWidgetComp->SetupAttachment(RootComponent);
+
+    const FRotator NewRotation = FRotator(30.0f, 90.0f, 0.0f); //TODO: make var
+    PSPickupItemWidgetComp->SetRelativeRotation(NewRotation);
+
+    const FVector WidgetOffset = FVector(0.0f, 0.0f, 60.0);  //TODO: make var
+    PSPickupItemWidgetComp->SetRelativeLocation(WidgetOffset);
+
+    PSPickupItemWidgetComp->SetCastShadow(false);
+
+
+
 }
 
 void APSPickupItem::BeginPlay()
@@ -55,10 +71,15 @@ void APSPickupItem::OnPickedUp()
 {
     // sound, anim, etc
 
+    PickupFlipbookComp->SetVisibility(false);
+    PickupCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    PSPickupItemWidgetComp->ActivePickupItemWidget(ItemType);
+
+    SetLifeSpan(3.5f);
+
     GetWorldTimerManager().ClearTimer(FlashTimerHandle);
     GetWorldTimerManager().ClearTimer(LifespanTimerHandle);
-
-    Destroy();
 }
 
 void APSPickupItem::SelectRandomItemType()
@@ -85,21 +106,21 @@ void APSPickupItem::SelectRandomItemType()
     switch (ItemType)
     {
     case EPickupItemType::BlueScale:
-        PickupFlipbook->SetFlipbook(BlueScaleFlipbook);
+        PickupFlipbookComp->SetFlipbook(BlueScaleFlipbook);
         UE_LOG(LogTemp, Warning, TEXT("BlueScale Spawned"));
         break;
     case EPickupItemType::OrangeScale:
-        PickupFlipbook->SetFlipbook(OrangeScaleFlipbook);
+        PickupFlipbookComp->SetFlipbook(OrangeScaleFlipbook);
         UE_LOG(LogTemp, Warning, TEXT("OrangeScale Spawned"));
         break;
     case EPickupItemType::Health:
-        PickupFlipbook->SetFlipbook(HealthFlipbook);
+        PickupFlipbookComp->SetFlipbook(HealthFlipbook);
         break;
     case EPickupItemType::Speed:
-        PickupFlipbook->SetFlipbook(SpeedFlipbook);
+        PickupFlipbookComp->SetFlipbook(SpeedFlipbook);
         break;
     case EPickupItemType::ScreenWipe:
-        PickupFlipbook->SetFlipbook(ScreenWipeFlipbook);
+        PickupFlipbookComp->SetFlipbook(ScreenWipeFlipbook);
         break;
     default:
         UE_LOG(LogTemp, Warning, TEXT("Unknown pickup item type."));
@@ -114,6 +135,6 @@ void APSPickupItem::StartFlashing()
 
 void APSPickupItem::FlashEffect()
 {
-    bool bIsVisible = PickupFlipbook->IsVisible();
-    PickupFlipbook->SetVisibility(!bIsVisible);
+    bool bIsVisible = PickupFlipbookComp->IsVisible();
+    PickupFlipbookComp->SetVisibility(!bIsVisible);
 }
