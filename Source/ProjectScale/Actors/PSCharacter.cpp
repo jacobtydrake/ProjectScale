@@ -16,6 +16,7 @@
 #include "ProjectScale/Controllers/PSPlayerController.h"
 #include "ProjectScale/Components/PSCharacterWidgetComponent.h"
 #include "ProjectScale/Controllers/PSScoreController.h"
+#include "ProjectScale/Components/PSVacuumComponent.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -55,6 +56,8 @@ APSCharacter::APSCharacter()
 	PSWidgetComp->SetCastShadow(false);
 	PSWidgetComp->SetVisibility(false);
 
+	PSVacuumComp = CreateDefaultSubobject<UPSVacuumComponent>(TEXT("PSVacuumComponent"));
+	PSVacuumComp->SetupAttachment(RootComponent);
 	// ComboWindow must at least be the length of the first attack
 	ComboWindowDurationOffset += FirstAttackAnimationLength;
 
@@ -89,7 +92,7 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	}
 }
 
-void APSCharacter::TakeDamage_Implementation(const float DamageAmount)
+void APSCharacter::TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection)
 {
 
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -98,6 +101,13 @@ void APSCharacter::TakeDamage_Implementation(const float DamageAmount)
 		LastDamageTime = CurrentTime;
 
 		CurrentHealth -= DamageAmount;
+
+		LaunchCharacter(LaunchDirection * 500, true, true);
+
+		GetSprite()->SetSpriteColor(FLinearColor::Red);
+
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &APSCharacter::RevertSpriteColor, 0.1f, false);
 
 		if (CachedHUD)
 		{
@@ -357,4 +367,10 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 		break;
 
 	}
+}
+
+
+void APSCharacter::RevertSpriteColor()
+{
+	GetSprite()->SetSpriteColor(FLinearColor::White);
 }

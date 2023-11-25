@@ -22,5 +22,5 @@ class PROJECTSCALE_API IPSCombatInterface
 
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Damage")
-	void TakeDamage(const float DamageAmount);
+	void TakeDamage(const float DamageAmount, const FVector& LaunchDirection);
 };

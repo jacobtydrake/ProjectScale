@@ -6,12 +6,10 @@
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 
-// Sets default values for this component's properties
 UPSDamageComponent::UPSDamageComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
 
-    // Create the box component and attach it to the component's owner
     DamageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("DamageCollision"));
     DamageCollision->SetBoxExtent(DamageCollisionSize);
     DamageCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -95,22 +93,22 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
     }
 
-    // Debug visualization
-    if (DamageCollision->IsCollisionEnabled())
-    {
-        DrawDebugBox
-        (
-            GetWorld(),
-            DamageCollision->GetComponentLocation(),
-            DamageCollision->GetScaledBoxExtent(),
-            FQuat(DamageCollision->GetComponentRotation()),
-            FColor::Red,
-            false,
-            -1.f, // Duration
-            0,
-            2
-        );
-    }
+    // debug visualization
+    //if (DamageCollision->IsCollisionEnabled())
+    //{
+    //    DrawDebugBox
+    //    (
+    //        GetWorld(),
+    //        DamageCollision->GetComponentLocation(),
+    //        DamageCollision->GetScaledBoxExtent(),
+    //        FQuat(DamageCollision->GetComponentRotation()),
+    //        FColor::Red,
+    //        false,
+    //        -1.f, // Duration
+    //        0,
+    //        2
+    //    );
+    //}
 }
 
 void UPSDamageComponent::OnDamageCollisionOverlap
@@ -125,7 +123,6 @@ void UPSDamageComponent::OnDamageCollisionOverlap
 {
     AActor* OwnerActor = GetOwner();
 
-    // Check if the OtherActor has the required tag
     if (OtherActor->ActorHasTag(TeamTag))
     {
         return;
@@ -134,9 +131,13 @@ void UPSDamageComponent::OnDamageCollisionOverlap
     {
         UE_LOG(LogTemp, Display, TEXT("Tags are different."))
     }
+    FVector ImpulseDirection = (OtherActor->GetActorLocation() - DamageCollision->GetComponentLocation()).GetSafeNormal();
     if (OtherActor->Implements<UPSCombatInterface>())
     {
-        IPSCombatInterface::Execute_TakeDamage(OtherActor, DamageAmount);
+        if (UCapsuleComponent* CapsuleComp = Cast<UCapsuleComponent>(OtherComp))
+        {
+            IPSCombatInterface::Execute_TakeDamage(OtherActor, DamageAmount, ImpulseDirection);
+        }
     }
 }
 

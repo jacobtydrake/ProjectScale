@@ -68,9 +68,15 @@ void APSEnemy::Tick(float DeltaTime)
 		FVector Offset = MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime;
 		AddActorWorldOffset(Offset, true);
 	}
+
+	if (bIsDead)
+	{
+		FRotator UprightRotation = FRotator(0.f, 0.0f, -30.f);
+		FlipbookComp->SetWorldRotation(UprightRotation);
+	}
 }
 
-void APSEnemy::TakeDamage_Implementation(const float DamageAmount)
+void APSEnemy::TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection)
 {
 	if (bIsDead)
 		return;
@@ -86,6 +92,7 @@ void APSEnemy::TakeDamage_Implementation(const float DamageAmount)
 
 	if (CurrentHealth <= 0.f)
 	{
+		DamagedLaunchDirection = LaunchDirection;
 		Die();
 	}
 }
@@ -109,6 +116,20 @@ void APSEnemy::Die()
 
 	float DelayBeforeSpawn = 0.45f;  // slightly less than the destruction delay
 	float DestructionDelay = 0.5f;
+
+	// change the collision profile and enable physics
+	CapsuleComp->SetCollisionProfileName(TEXT("RigidBody"));
+	CapsuleComp->SetSimulatePhysics(true);
+	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+
+	// Assuming MovementDirection is the direction of the player's attack
+	float LaunchStrength = 1000.0f; // Adjust this value as needed
+
+	// Apply launch impulse
+	CapsuleComp->AddImpulse(DamagedLaunchDirection * LaunchStrength, NAME_None, true);
+
 
 	FTimerHandle SpawnItemTimerHandle;
 	GetWorldTimerManager().SetTimer(SpawnItemTimerHandle, this, &APSEnemy::SpawnPickupItem, DelayBeforeSpawn, false);

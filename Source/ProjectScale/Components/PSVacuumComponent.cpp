@@ -7,7 +7,6 @@
 UPSVacuumComponent::UPSVacuumComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 void UPSVacuumComponent::BeginPlay()
@@ -17,12 +16,17 @@ void UPSVacuumComponent::BeginPlay()
 	SetSphereRadius(OriginalRadius);
 	OnComponentBeginOverlap.AddDynamic(this, &UPSVacuumComponent::OnVacuumOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UPSVacuumComponent::OnVacuumEndOverlap);
+
+    CurrentRadius = OriginalRadius;
 }
 
 void UPSVacuumComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	if (TrackedPickupItems.Num() > 0)
+	{
+		AttractPickupItems();
+	}
 }
 
 void UPSVacuumComponent::SetVacuumRadius(const float NewRadius)
@@ -48,15 +52,32 @@ void UPSVacuumComponent::OnVacuumEndOverlap(UPrimitiveComponent* OverlappedCompo
 
 void UPSVacuumComponent::AttractPickupItems()
 {
-	for (APSPickupItem* PickupItem : TrackedPickupItems)
-	{
-		if (PickupItem)
-		{
-			FVector DirectionToOwner = (GetOwner()->GetActorLocation() - PickupItem->GetActorLocation()).GetSafeNormal();
-			float AttractionSpeed = 100.0f;
-			FVector NewLocation = PickupItem->GetActorLocation() + DirectionToOwner * AttractionSpeed * GetWorld()->GetDeltaSeconds();
-			PickupItem->SetActorLocation(NewLocation);
-		}
-	}
+    for (int32 i = 0; i < TrackedPickupItems.Num(); ++i)
+    {
+        APSPickupItem* PickupItem = TrackedPickupItems[i];
+        if (PickupItem)
+        {
+            FVector PlayerLocation = GetOwner()->GetActorLocation();
+            FVector PickupLocation = PickupItem->GetActorLocation();
+            float DistanceSquared = FVector::DistSquared(PlayerLocation, PickupLocation);
+
+            if (DistanceSquared <= FMath::Square(CurrentRadius))
+            {
+                FVector DirectionToOwner = (PlayerLocation - PickupLocation).GetSafeNormal();
+                TRange<float> InputRange(0.f, FMath::Square(CurrentRadius));
+                TRange<float> OutputRange(MinSpeed, MaxSpeed);
+                float AttractionSpeed = FMath::GetMappedRangeValueClamped(InputRange, OutputRange, DistanceSquared);
+
+                FVector NewLocation = FMath::VInterpTo(PickupLocation, PlayerLocation, GetWorld()->GetDeltaSeconds(), AttractionSpeed);
+                PickupItem->SetActorLocation(NewLocation);
+
+                // need to check if iten was picked up during loop
+                if (i < TrackedPickupItems.Num() && TrackedPickupItems[i] != PickupItem)
+                {
+                    --i;
+                }
+            }
+        }
+    }
 }
 

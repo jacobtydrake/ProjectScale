@@ -17,6 +17,7 @@ class UPSDamageComponent;
 class APSHUD;
 class UPSCharacterWidgetComponent;
 class UPSScoreController;
+class UPSVacuumComponent;
 
 enum class EPickupItemType : uint8;
 
@@ -45,6 +46,8 @@ public:
 	UFUNCTION()
 	void OnItemPickup(EPickupItemType ItemType);
 
+	void RevertSpriteColor();
+
 protected:
 	/* Overrides */
 	virtual void BeginPlay() override;
@@ -52,7 +55,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerIAnputComponent) override;
 
 	/* PSCombatInterface Implementation */
-	virtual void TakeDamage_Implementation(const float DamageAmount);
+	virtual void TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection);
 
 	/* Input Actions */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -94,6 +97,8 @@ protected:
 	TObjectPtr<UPSDamageComponent> DamageComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPSCharacterWidgetComponent> PSWidgetComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPSVacuumComponent> PSVacuumComp;
 
 private:
 

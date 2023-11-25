@@ -32,7 +32,7 @@ public:
 	const bool GetIsDead() const { return bIsDead; }
 	UFUNCTION(BlueprintCallable)
 	const FVector2D Get2DMovementDirection() const { return FVector2D(MovementDirection.X, -MovementDirection.Y); }
-	
+
 
 	UFUNCTION(BlueprintCallable)
 	void InitializeDirection(const FVector& NewDirection);
@@ -43,7 +43,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	/* PSCombatInterface Implementation */
-	virtual void TakeDamage_Implementation(const float DamageAmount);
+	virtual void TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection);
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -97,5 +97,8 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TMap<EPickupItemType, float> CustomDropChances;
+
+	UPROPERTY()
+	FVector DamagedLaunchDirection{ FVector::ZeroVector };
 
 };

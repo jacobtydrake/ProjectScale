@@ -39,7 +39,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> DamageCollision;
 
-	// Tag to identify valid targets
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	FName TeamTag;
 
@@ -53,7 +52,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage Collision", meta = (AllowPrivateAccess = "true"))
 	FVector DamageCollisionSize = FVector(50.f, 50.f, 50.f);
 
-	// Editable relative location of the damage box
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage Collision", meta = (AllowPrivateAccess = "true"))
 	FVector DamageCollisionRelativeLocation = FVector::ZeroVector;
 

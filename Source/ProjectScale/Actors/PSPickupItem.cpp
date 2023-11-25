@@ -8,6 +8,7 @@
 #include "ProjectScale/Components/PSPickupItemWidgetComponent.h"
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 APSPickupItem::APSPickupItem()
@@ -48,6 +49,11 @@ void APSPickupItem::BeginPlay()
     // start flashing based off total lifespan
     GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &APSPickupItem::StartFlashing, Lifespan - FlashTime, false);
     GetWorldTimerManager().SetTimer(LifespanTimerHandle, this, &APSPickupItem::OnPickedUp, Lifespan, false);
+
+    if (SceneComp)
+    {
+        SceneComp->SetWorldRotation(FRotator(0, 0, 0));
+    }
 }
 
 void APSPickupItem::Tick(float DeltaTime)
@@ -65,8 +71,11 @@ void APSPickupItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 {
     if (APSCharacter* PlayerCharacter = Cast<APSCharacter>(OtherActor))
     {
-        PlayerCharacter->OnItemPickup(ItemType);
-        OnPickedUp();
+        if (OtherComp == PlayerCharacter->GetCapsuleComponent())
+        {
+            PlayerCharacter->OnItemPickup(ItemType);
+            OnPickedUp();
+        }
     }
 }
 

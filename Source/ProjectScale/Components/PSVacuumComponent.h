@@ -35,7 +35,16 @@ private:
 
 	void AttractPickupItems();
 
-	UPROPERTY()
-	float OriginalRadius{ 250.0f };
+	UPROPERTY(EditDefaultsOnly)
+	float OriginalRadius{ 150.0f };
+
+	UPROPERTY(EditAnywhere)
+	float CurrentRadius;
+
+	UPROPERTY(EditAnywhere)
+	float MinSpeed{ 1.0f };
+
+	UPROPERTY(EditAnywhere)
+	float MaxSpeed{ 30.0f };
 
 };
