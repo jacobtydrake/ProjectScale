@@ -115,7 +115,7 @@ void APSPickupItem::SelectRandomItemType()
         PickupFlipbookComp->SetFlipbook(BlueScaleFlipbook);
         break;
     case EPickupItemType::PurpleScale:
-        PickupFlipbookComp->SetFlipbook(OrangeScaleFlipbook);
+        PickupFlipbookComp->SetFlipbook(PurpleScaleFlipbook);
         break;
     case EPickupItemType::GoldScale:
         PickupFlipbookComp->SetFlipbook(GoldScaleFlipbook);

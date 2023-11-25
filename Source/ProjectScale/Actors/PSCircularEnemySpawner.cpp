@@ -150,11 +150,11 @@ void APSCircularEnemySpawner::SpawnEnemyRow(const int32 NumberOfEnemies, const f
 
     // math hard, thanks gpt
 
-    // random angle for row start position and direction towards the circle center
+    // random angle for row start position
     float StartAngle = FMath::RandRange(0.f, 360.f);
-    FVector StartPosition = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(StartAngle)) * (PlatformRadius + SpawnDistanceFromPlatform), FMath::Sin(FMath::DegreesToRadians(StartAngle)) * (PlatformRadius + SpawnDistanceFromPlatform), ZOffset);
+    FVector StartPosition = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(StartAngle)) * (PlatformRadius + SpawnDistanceFromPlatform), FMath::Sin(FMath::DegreesToRadians(StartAngle)) * PlatformRadius, ZOffset);
 
-    // calculate the direction vector tangent to the circle at the start position
+    // tangent direction on XY plane
     FVector TangentDirection = FVector(-FMath::Sin(FMath::DegreesToRadians(StartAngle)), FMath::Cos(FMath::DegreesToRadians(StartAngle)), 0.0f);
 
     // determine a line of target points inside the circle parallel to the row
