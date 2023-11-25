@@ -26,23 +26,47 @@ protected:
 
 public:
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+    bool bIsRowSpawner = false;
+
     UFUNCTION()
     void SpawnEnemies(const int32 NumberOfEnemies);
 
     UFUNCTION()
     void SpawnSingleEnemy();
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+    UFUNCTION()
+    void InitializeSpawnTimer();
+
+    UFUNCTION()
+    void SpawnEnemyRow(const int32 NumberOfEnemies, const float Spacing);
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
     FVector PlatformCenter { 0, 0, 0 };
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+    UPROPERTY(EditAnywhere, Category = "Spawning")
     float PlatformRadius { 10.0f };
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+    float SpawnDistanceFromPlatform{ 100.0f };
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
     float ZOffset { 0.0f };
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+    UPROPERTY(EditAnywhere, Category = "Spawning")
     TSubclassOf<APSEnemy> EnemyClass;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    float RowSpacing = 135.0f;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    int32 InitialNumberOfEnemiesInRow = 1;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    int32 MaxNumberOfEnemiesInRow = 10;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    float IncrementInterval = 60.0f; // Seconds
 
 
     // curve to control spawn frequency and number of enemies
@@ -50,13 +74,29 @@ public:
     TObjectPtr<UCurveFloat> SpawnCurve;
 
     UPROPERTY(EditAnywhere, Category = "Spawning")
-    float BaseSpawnRate { 0.1f };
+    float BaseSpawnRate { .1f };
+
+
 
     FTimerHandle SpawnTimer;
 
     float CurrentTime;
 
     void HandleEnemySpawn();
-    void InitializeSpawnTimer();
+
     float GetSpawnFrequency();
+
+
+    UFUNCTION()
+    void IncrementNumberOfEnemiesInRow();
+
+
+
+private:
+
+    int32 CurrentNumberOfEnemiesInRow;
+    FTimerHandle IncrementTimerHandle;
+    FTimerHandle FrequencyCheckTimerHandle;
+
+    float LastSpawnDelay{ -1.0f };
 };

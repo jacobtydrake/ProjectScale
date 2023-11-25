@@ -28,7 +28,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Die();
+	virtual void Die() override;
 	virtual void UpdateDropChances() override;
 
 	/* Components */
@@ -36,11 +36,14 @@ protected:
 	TObjectPtr<UPSDamageComponent> DamageComp;
 
 	/**/
+	UFUNCTION()
 	void UpdateChaseBehavior();
 
 	/**/
+	UFUNCTION()
 	void PerformAttack();
 
+	UFUNCTION()
 	void EndAttack();
 
 	UFUNCTION()

@@ -31,6 +31,12 @@ void UPSPickupItemWidgetComponent::ActivePickupItemWidget(const EPickupItemType 
     case EPickupItemType::BlueScale:
         WidgetInst->SetText("+2");
         break;
+    case EPickupItemType::PurpleScale:
+        WidgetInst->SetText("+3");
+        break;
+    case EPickupItemType::GoldScale:
+        WidgetInst->SetText("+20");
+        break;
     case EPickupItemType::Speed:
         WidgetInst->SetText("+Speed");
         break;
@@ -63,7 +69,6 @@ void UPSPickupItemWidgetComponent::InitializeWidget()
         {
             SetWidget(WidgetInst);
             WidgetInst->SetVisibility(ESlateVisibility::Collapsed);
-            //WidgetInst->
         }
         else
         {

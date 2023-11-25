@@ -321,15 +321,19 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 	switch (ItemType)
 	{
 	case EPickupItemType::OrangeScale:
-
 		CachedScoreController->AddItemToScore(ItemType);
-
 		break;
 
 	case EPickupItemType::BlueScale:
-
 		CachedScoreController->AddItemToScore(ItemType);
+		break;
 
+	case EPickupItemType::PurpleScale:
+		CachedScoreController->AddItemToScore(ItemType);
+		break;
+
+	case EPickupItemType::GoldScale:
+		CachedScoreController->AddItemToScore(ItemType);
 		break;
 	
 	case EPickupItemType::Health:

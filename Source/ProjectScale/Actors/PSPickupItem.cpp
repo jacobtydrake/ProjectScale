@@ -39,8 +39,6 @@ APSPickupItem::APSPickupItem()
 
     PSPickupItemWidgetComp->SetCastShadow(false);
 
-
-
 }
 
 void APSPickupItem::BeginPlay()
@@ -115,6 +113,12 @@ void APSPickupItem::SelectRandomItemType()
         break;
     case EPickupItemType::BlueScale:
         PickupFlipbookComp->SetFlipbook(BlueScaleFlipbook);
+        break;
+    case EPickupItemType::PurpleScale:
+        PickupFlipbookComp->SetFlipbook(OrangeScaleFlipbook);
+        break;
+    case EPickupItemType::GoldScale:
+        PickupFlipbookComp->SetFlipbook(GoldScaleFlipbook);
         break;
     case EPickupItemType::Health:
         PickupFlipbookComp->SetFlipbook(HealthFlipbook);

@@ -135,8 +135,6 @@ void APSEnemy::SpawnPickupItem()
 			PickupItem->InitializePickupItem(CustomDropChances);
 			PickupItem->EnableCollision();
 		}
-
-		UE_LOG(PSEnemy, Warning, TEXT("ItemSpawned"));
 	}
 	else
 	{

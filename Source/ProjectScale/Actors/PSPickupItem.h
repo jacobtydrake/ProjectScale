@@ -17,6 +17,8 @@ enum class EPickupItemType : uint8
 {
 	BlueScale UMETA(DisplayName = "Blue Scale"),
 	OrangeScale UMETA(DisplayName = "Orange Scale"),
+	PurpleScale UMETA(DisplayName = "Purple Scale"),
+	GoldScale UMETA(DisplayName = "Gold Scale"),
 	Health UMETA(DisplayName = "Health"),
 	Speed UMETA(DisplayName = "Speed"),
 	ScreenWipe UMETA(DisplayName = "ScreenWipe")
@@ -74,6 +76,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> OrangeScaleFlipbook;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TObjectPtr<UPaperFlipbook> PurpleScaleFlipbook;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TObjectPtr<UPaperFlipbook> GoldScaleFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> HealthFlipbook;

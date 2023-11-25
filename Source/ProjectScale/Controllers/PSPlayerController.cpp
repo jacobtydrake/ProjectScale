@@ -76,6 +76,4 @@ void APSPlayerController::OnCharacterDeath()
 		TMap<EPickupItemType, int32> ItemCounts = PSScoreController->GetItemPickupCounts();
 		CachedHUD->DisplayScoreScreen(ItemCounts, TotalScore);
 	}
-
-	UE_LOG(LogTemp, Display, TEXT("void APSPlayerController::OnCharacterDeath()"));
 }

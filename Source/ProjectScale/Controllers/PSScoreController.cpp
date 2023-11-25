@@ -29,6 +29,10 @@ int32 UPSScoreController::CalculateScoreForItem(EPickupItemType ItemType) const
         return 1;
     case EPickupItemType::OrangeScale:
         return 2; 
+    case EPickupItemType::PurpleScale:
+        return 3;
+    case EPickupItemType::GoldScale:
+        return 20;
     default:
         return 0;
     }
