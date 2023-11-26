@@ -21,17 +21,20 @@ void UPSScoreScreen::SetItemPickupCounts(const TMap<EPickupItemType, int32>& New
     int32 OrangeScaleCountValue = ItemPickupCounts.Contains(EPickupItemType::OrangeScale) ? ItemPickupCounts[EPickupItemType::OrangeScale] : 0;
     int32 BlueScaleCountValue = ItemPickupCounts.Contains(EPickupItemType::BlueScale) ? ItemPickupCounts[EPickupItemType::BlueScale] : 0;
     int32 PurpleScaleCountValue = ItemPickupCounts.Contains(EPickupItemType::PurpleScale) ? ItemPickupCounts[EPickupItemType::PurpleScale] : 0;
+    int32 BlackScaleCountValue = ItemPickupCounts.Contains(EPickupItemType::BlackScale) ? ItemPickupCounts[EPickupItemType::BlackScale] : 0;
     int32 GoldScaleCountValue = ItemPickupCounts.Contains(EPickupItemType::GoldScale) ? ItemPickupCounts[EPickupItemType::GoldScale] : 0;
 
     OrangeScaleCount->SetText(FText::AsNumber(OrangeScaleCountValue));
     BlueScaleCount->SetText(FText::AsNumber(BlueScaleCountValue));
     PurpleScaleCount->SetText(FText::AsNumber(PurpleScaleCountValue));
+    BlackScaleCount->SetText(FText::AsNumber(BlackScaleCountValue));
     GoldScaleCount->SetText(FText::AsNumber(GoldScaleCountValue));
 
     // respective scores should really be calculated and kept in scorecontroller but oh well
     OrangeScaleScore->SetText(FText::AsNumber(OrangeScaleCountValue));
     BlueScaleScore->SetText(FText::AsNumber(BlueScaleCountValue * 2));
     PurpleScaleScore->SetText(FText::AsNumber(PurpleScaleCountValue * 3));
+    BlackScaleScore->SetText(FText::AsNumber(BlackScaleCountValue * 10));
     GoldScaleScore->SetText(FText::AsNumber(GoldScaleCountValue * 20));
     
 }

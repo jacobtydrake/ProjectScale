@@ -40,9 +40,9 @@ void APSAttackingEnemy::Die()
 void APSAttackingEnemy::UpdateDropChances()
 {
 	CustomDropChances.Add(EPickupItemType::PurpleScale, 90.0f);
-	CustomDropChances.Add(EPickupItemType::Speed, 1.0f);
+	CustomDropChances.Add(EPickupItemType::Speed, 3.0f);
 	CustomDropChances.Add(EPickupItemType::Health, 6.0f);
-	CustomDropChances.Add(EPickupItemType::ScreenWipe, 3.0f);
+	CustomDropChances.Add(EPickupItemType::ScreenWipe, 1.0f);
 }
 
 void APSAttackingEnemy::PerformAttack()

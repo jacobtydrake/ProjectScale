@@ -69,7 +69,7 @@ protected:
 	float AttackDamage{ 1.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float AttackThrustPower{ 1.0f };
+	float AttackThrustPower{ 1000.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float TotalAttackDuration{ 1.4f };
@@ -78,10 +78,7 @@ protected:
 	float AttackHurtDuration{ 0.2f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float AttackAnimationLength{ 0.3f }; 
-
-	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float LaunchDuration{ 0.3f };
+	float TotalLaunchDuration{ 0.3f };
 
 	float AttackToLaunchDelay{ .5f };
 
@@ -105,4 +102,7 @@ private:
 	FTimerHandle DamageCollisionTimerHandle;
 
 	bool bIsLaunching{ false };
+
+	float CurrentLaunchDuration{ 0.0f };
+
 };

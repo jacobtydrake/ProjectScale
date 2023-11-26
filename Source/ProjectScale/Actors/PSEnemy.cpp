@@ -4,6 +4,7 @@
 #include "PaperFlipbookComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PSPickupItem.h"
+#include "ProjectScale/Utils/PSGlobals.h"
 
 DEFINE_LOG_CATEGORY(PSEnemy);
 
@@ -27,6 +28,7 @@ APSEnemy::APSEnemy()
 	FlipbookComp->PrimaryComponentTick.TickGroup = TG_PrePhysics;
 	FlipbookComp->SetCollisionProfileName(TEXT("DefaultEnemyCollision"));
 	FlipbookComp->SetGenerateOverlapEvents(true);
+	FlipbookComp->SetRelativeRotation(PSGlobals::SpriteRotation);
 
 	DeathEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DeathEffect"));
 	DeathEffect->SetupAttachment(RootComponent);
@@ -53,6 +55,8 @@ void APSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CurrentHealth = MaxHealth;
+
 	UpdateDropChances();
 }
 
@@ -71,7 +75,7 @@ void APSEnemy::Tick(float DeltaTime)
 
 	if (bIsDead)
 	{
-		FRotator UprightRotation = FRotator(0.f, 0.0f, -30.f);
+		FRotator UprightRotation = PSGlobals::SpriteRotation;
 		FlipbookComp->SetWorldRotation(UprightRotation);
 	}
 }
@@ -124,8 +128,7 @@ void APSEnemy::Die()
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 
-	// Assuming MovementDirection is the direction of the player's attack
-	float LaunchStrength = 1000.0f; // Adjust this value as needed
+	float LaunchStrength = 1000.0f; // #TODO: make var
 
 	// Apply launch impulse
 	CapsuleComp->AddImpulse(DamagedLaunchDirection * LaunchStrength, NAME_None, true);

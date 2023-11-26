@@ -18,6 +18,7 @@ enum class EPickupItemType : uint8
 	BlueScale UMETA(DisplayName = "Blue Scale"),
 	OrangeScale UMETA(DisplayName = "Orange Scale"),
 	PurpleScale UMETA(DisplayName = "Purple Scale"),
+	BlackScale UMETA(DisplayName = "Black Scale"),
 	GoldScale UMETA(DisplayName = "Gold Scale"),
 	Health UMETA(DisplayName = "Health"),
 	Speed UMETA(DisplayName = "Speed"),
@@ -81,6 +82,9 @@ public:
 	TObjectPtr<UPaperFlipbook> PurpleScaleFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TObjectPtr<UPaperFlipbook> BlackScaleFlipbook;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> GoldScaleFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
@@ -101,7 +105,6 @@ private:
 	float FlashTime = 8.0f;
 
 	FTimerHandle FlashTimerHandle;
-	FTimerHandle LifespanTimerHandle;
 
 	void StartFlashing();
 	void FlashEffect();

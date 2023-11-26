@@ -6,7 +6,7 @@
 
 APSRareFish::APSRareFish()
 {
-	MovementSpeed = 500.0f;
+	MovementSpeed = 600.0f;
 }
 
 void APSRareFish::UpdateDropChances()

@@ -9,6 +9,7 @@
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "ProjectScale/Utils/PSGlobals.h"
 
 // Sets default values
 APSPickupItem::APSPickupItem()
@@ -25,6 +26,7 @@ APSPickupItem::APSPickupItem()
 
     PickupFlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("PickupFlipbook"));
     PickupFlipbookComp->SetupAttachment(RootComponent);
+    PickupFlipbookComp->SetRelativeRotation(PSGlobals::SpriteRotation);
 
     PSPickupItemWidgetComp = CreateDefaultSubobject<UPSPickupItemWidgetComponent>(TEXT("PSPickupItemWidget"));
     PSPickupItemWidgetComp->SetupAttachment(RootComponent);
@@ -48,10 +50,12 @@ void APSPickupItem::BeginPlay()
     
     // start flashing based off total lifespan
     GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &APSPickupItem::StartFlashing, Lifespan - FlashTime, false);
-    GetWorldTimerManager().SetTimer(LifespanTimerHandle, this, &APSPickupItem::OnPickedUp, Lifespan, false);
 
     if (SceneComp)
     {
+        const FVector ComponentLocation = SceneComp->GetComponentLocation();
+        const FVector AdjustedWorldLocation = FVector(ComponentLocation.X, ComponentLocation.Y, 100);
+        SceneComp->SetRelativeLocation(AdjustedWorldLocation);
         SceneComp->SetWorldRotation(FRotator(0, 0, 0));
     }
 }
@@ -91,7 +95,6 @@ void APSPickupItem::OnPickedUp()
     SetLifeSpan(3.5f);
 
     GetWorldTimerManager().ClearTimer(FlashTimerHandle);
-    GetWorldTimerManager().ClearTimer(LifespanTimerHandle);
 }
 
 void APSPickupItem::SelectRandomItemType()
@@ -125,6 +128,9 @@ void APSPickupItem::SelectRandomItemType()
         break;
     case EPickupItemType::PurpleScale:
         PickupFlipbookComp->SetFlipbook(PurpleScaleFlipbook);
+        break;
+    case EPickupItemType::BlackScale:
+        PickupFlipbookComp->SetFlipbook(BlackScaleFlipbook);
         break;
     case EPickupItemType::GoldScale:
         PickupFlipbookComp->SetFlipbook(GoldScaleFlipbook);

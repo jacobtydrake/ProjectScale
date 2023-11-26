@@ -81,7 +81,7 @@ protected:
 	int32 CurrentHealth;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float MovementSpeed{ 100 };
+	float MovementSpeed{ 120 };
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	FVector MovementDirection{ 1,0,0 };

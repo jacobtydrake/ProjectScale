@@ -48,6 +48,10 @@ protected:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UTextBlock> PurpleScaleScore;
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UTextBlock> BlackScaleCount;
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UTextBlock> BlackScaleScore;
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<UTextBlock> GoldScaleCount;
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UTextBlock> GoldScaleScore;

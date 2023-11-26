@@ -53,9 +53,9 @@ void APSChasingEnemy::Die()
 void APSChasingEnemy::UpdateDropChances()
 {
     CustomDropChances.Add(EPickupItemType::BlueScale, 90.0f);
-    CustomDropChances.Add(EPickupItemType::Speed, 6.0f);
+    CustomDropChances.Add(EPickupItemType::Speed, 7.0f);
     CustomDropChances.Add(EPickupItemType::Health, 3.0f);
-    CustomDropChances.Add(EPickupItemType::ScreenWipe, 1.0f);
+    CustomDropChances.Add(EPickupItemType::ScreenWipe, 0.5f);
 }
 
 void APSChasingEnemy::UpdateChaseBehavior()
@@ -66,6 +66,7 @@ void APSChasingEnemy::UpdateChaseBehavior()
 
         if (bHasInfiniteDetectionRange || DistanceToPlayer <= ChaseRange)
         {
+            bHasInfiniteDetectionRange = true;
             FVector DirectionToPlayer = (PlayerCharacter->GetActorLocation() - GetActorLocation()).GetSafeNormal();
             DirectionToPlayer.Z = 0.0f; // don't change in vertical direction
             MovementDirection = DirectionToPlayer;
@@ -99,23 +100,25 @@ void APSChasingEnemy::EndAttack()
 void APSChasingEnemy::StartLaunch()
 {
     bIsLaunching = true;
+    CurrentLaunchDuration = TotalLaunchDuration;
     GetWorldTimerManager().SetTimer(DamageCollisionTimerHandle, this, &APSChasingEnemy::ToggleDamageCollision,  .2, false);
     GetWorldTimerManager().SetTimer(LaunchTimerHandle, this, &APSChasingEnemy::HandleLaunch, 0.016f, true);
 }
 
 void APSChasingEnemy::HandleLaunch()
 {
-    if (bIsLaunching) {
+    if (bIsLaunching) 
+    {
         // update the enemy's position based on the launch velocity
-        FVector NewLocation = GetActorLocation() + MovementDirection * 1000.0f * GetWorld()->GetDeltaSeconds(); //TODO replace 1000.0f with var
+        FVector NewLocation = GetActorLocation() + MovementDirection * AttackThrustPower * GetWorld()->GetDeltaSeconds();
         SetActorLocation(NewLocation);
 
         // reduce the launch duration
-        LaunchDuration -= GetWorld()->GetDeltaSeconds();
-        if (LaunchDuration <= 0) {
+        CurrentLaunchDuration -= GetWorld()->GetDeltaSeconds();
+        if (CurrentLaunchDuration <= 0) {
             // stop the launch
             bIsLaunching = false;
-            LaunchDuration = 0.3f;
+            CurrentLaunchDuration = TotalLaunchDuration;
             DamageComp->DeactivateDamageCollision();
             GetWorldTimerManager().ClearTimer(LaunchTimerHandle);
         }

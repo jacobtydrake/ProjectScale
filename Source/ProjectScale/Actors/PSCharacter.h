@@ -88,6 +88,12 @@ protected:
 	UFUNCTION()
 	void Die();
 
+	/* Speed Buff */
+	UFUNCTION()
+	void ApplySpeedBuff();
+	UFUNCTION()
+	void RevertSpeedBuff();
+
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComp;
@@ -167,6 +173,21 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DamageCooldown{ 1.0f };
 	float LastDamageTime{ 0.0f };
+
+	/* Speed buff properties */
+	UPROPERTY(EditAnywhere, Category = "Speed Buff")
+	float SpeedBuffMultiplier = 1.25f; 
+	UPROPERTY(EditAnywhere, Category = "Speed Buff")
+	float SpeedBuffDuration = 10.0f; 
+	UPROPERTY(EditAnywhere, Category = "Speed Buff")
+	float ReducedAttackCooldown = 0.3f;
+
+	/* Speed Buff Timer handle */
+	FTimerHandle SpeedBuffTimerHandle;
+
+
+	// Original attack cooldown
+	float OriginalAttackCooldown;
 
 	/* Cached */
 	UPROPERTY()

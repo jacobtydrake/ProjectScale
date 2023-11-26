@@ -17,6 +17,7 @@
 #include "ProjectScale/Components/PSCharacterWidgetComponent.h"
 #include "ProjectScale/Controllers/PSScoreController.h"
 #include "ProjectScale/Components/PSVacuumComponent.h"
+#include "ProjectScale/Utils/PSGlobals.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -58,6 +59,9 @@ APSCharacter::APSCharacter()
 
 	PSVacuumComp = CreateDefaultSubobject<UPSVacuumComponent>(TEXT("PSVacuumComponent"));
 	PSVacuumComp->SetupAttachment(RootComponent);
+
+	GetSprite()->SetRelativeRotation(PSGlobals::SpriteRotation);
+
 	// ComboWindow must at least be the length of the first attack
 	ComboWindowDurationOffset += FirstAttackAnimationLength;
 
@@ -100,9 +104,12 @@ void APSCharacter::TakeDamage_Implementation(const float DamageAmount, const FVe
 	{
 		LastDamageTime = CurrentTime;
 
-		CurrentHealth -= DamageAmount;
+		//CurrentHealth -= DamageAmount;
 
-		LaunchCharacter(LaunchDirection * 500, true, true);
+		FVector DirectionToLaunch = LaunchDirection;
+		DirectionToLaunch.Z = 0.0f;
+
+		LaunchCharacter(DirectionToLaunch * 500, true, true);
 
 		GetSprite()->SetSpriteColor(FLinearColor::Red);
 
@@ -326,6 +333,23 @@ void APSCharacter::Die()
 	}
 }
 
+void APSCharacter::ApplySpeedBuff()
+{
+	OriginalAttackCooldown = AttackCooldown;
+
+	GetCharacterMovement()->MaxWalkSpeed *= SpeedBuffMultiplier;
+	AttackCooldown = ReducedAttackCooldown;
+
+	GetWorldTimerManager().ClearTimer(SpeedBuffTimerHandle);
+	GetWorldTimerManager().SetTimer(SpeedBuffTimerHandle, this, &APSCharacter::RevertSpeedBuff, SpeedBuffDuration);
+}
+
+void APSCharacter::RevertSpeedBuff()
+{
+	GetCharacterMovement()->MaxWalkSpeed /= SpeedBuffMultiplier;
+	AttackCooldown = OriginalAttackCooldown;
+}
+
 void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 {
 	switch (ItemType)
@@ -339,6 +363,10 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 		break;
 
 	case EPickupItemType::PurpleScale:
+		CachedScoreController->AddItemToScore(ItemType);
+		break;
+
+	case EPickupItemType::BlackScale:
 		CachedScoreController->AddItemToScore(ItemType);
 		break;
 
@@ -363,6 +391,8 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 		break;
 
 	case EPickupItemType::Speed:
+
+		ApplySpeedBuff();
 
 		break;
 
