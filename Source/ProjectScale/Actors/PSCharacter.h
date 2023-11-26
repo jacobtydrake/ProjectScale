@@ -185,6 +185,8 @@ private:
 	/* Speed Buff Timer handle */
 	FTimerHandle SpeedBuffTimerHandle;
 
+	bool bIsSpeedBuffActive = false;
+
 
 	// Original attack cooldown
 	float OriginalAttackCooldown;

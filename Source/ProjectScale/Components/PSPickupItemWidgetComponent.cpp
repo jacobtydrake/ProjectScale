@@ -34,6 +34,9 @@ void UPSPickupItemWidgetComponent::ActivePickupItemWidget(const EPickupItemType 
     case EPickupItemType::PurpleScale:
         WidgetInst->SetText("+3");
         break;
+    case EPickupItemType::BlackScale:
+        WidgetInst->SetText("+10");
+        break;
     case EPickupItemType::GoldScale:
         WidgetInst->SetText("+20");
         break;

@@ -104,7 +104,7 @@ void APSCharacter::TakeDamage_Implementation(const float DamageAmount, const FVe
 	{
 		LastDamageTime = CurrentTime;
 
-		//CurrentHealth -= DamageAmount;
+		CurrentHealth -= DamageAmount;
 
 		FVector DirectionToLaunch = LaunchDirection;
 		DirectionToLaunch.Z = 0.0f;
@@ -335,11 +335,15 @@ void APSCharacter::Die()
 
 void APSCharacter::ApplySpeedBuff()
 {
-	OriginalAttackCooldown = AttackCooldown;
+	if (!bIsSpeedBuffActive)
+	{
+		OriginalAttackCooldown = AttackCooldown;
 
-	GetCharacterMovement()->MaxWalkSpeed *= SpeedBuffMultiplier;
-	AttackCooldown = ReducedAttackCooldown;
+		GetCharacterMovement()->MaxWalkSpeed *= SpeedBuffMultiplier;
+		AttackCooldown = ReducedAttackCooldown;
 
+		bIsSpeedBuffActive = true;
+	}
 	GetWorldTimerManager().ClearTimer(SpeedBuffTimerHandle);
 	GetWorldTimerManager().SetTimer(SpeedBuffTimerHandle, this, &APSCharacter::RevertSpeedBuff, SpeedBuffDuration);
 }
@@ -348,6 +352,8 @@ void APSCharacter::RevertSpeedBuff()
 {
 	GetCharacterMovement()->MaxWalkSpeed /= SpeedBuffMultiplier;
 	AttackCooldown = OriginalAttackCooldown;
+
+	bIsSpeedBuffActive = false;
 }
 
 void APSCharacter::OnItemPickup(EPickupItemType ItemType)
