@@ -62,13 +62,6 @@ void UPSScoreController::StartSpawningScales(const FVector& NewSpawnLocation, co
         CurrentItemType = ScaleTypesToSpawn[CurrentScaleTypeIndex];
         StartSpawningCurrentType();
     }
-    else
-    {
-        if (CachedHUD)
-        {
-            CachedHUD->UpdateScoreScreenBoxVisibility(CurrentScaleTypeIndex);
-        }
-    }
 }
 
 void UPSScoreController::SpawnNextScale()
@@ -112,6 +105,13 @@ void UPSScoreController::MoveToNextItemType()
     {
         CurrentItemType = ScaleTypesToSpawn[CurrentScaleTypeIndex];
         GetWorld()->GetTimerManager().SetTimer(ScaleSpawnTimerHandle, this, &UPSScoreController::StartSpawningCurrentType, DelayBetweenTypes, false);
+    }
+    else
+    {
+        if (CachedHUD)
+        {
+            CachedHUD->UpdateScoreScreenBoxVisibility(CurrentScaleTypeIndex);
+        }
     }
 }
 
