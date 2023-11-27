@@ -141,8 +141,8 @@ void APSPickupItem::SelectRandomItemType()
     case EPickupItemType::Speed:
         PickupFlipbookComp->SetFlipbook(SpeedFlipbook);
         break;
-    case EPickupItemType::ScreenWipe:
-        PickupFlipbookComp->SetFlipbook(ScreenWipeFlipbook);
+    case EPickupItemType::Attack:
+        PickupFlipbookComp->SetFlipbook(AttackWipeFlipbook);
         break;
     default:
         UE_LOG(LogTemp, Warning, TEXT("Unknown pickup item type."));

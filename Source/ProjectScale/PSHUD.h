@@ -37,7 +37,16 @@ public:
 	void UpdateHealthWidget(int32 NewHealth);
 
 	UFUNCTION()
+	void UpdateAttackPowerupWidget(const float Time);
+
+	UFUNCTION()
+	void UpdateSpeedPowerupWidget(const float Time);
+
+	UFUNCTION()
 	void DisplayScoreScreen(const TMap<EPickupItemType, int32>& ItemCounts, int32 TotalScore);
+
+	UFUNCTION()
+	void UpdateScoreScreenBoxVisibility(const int32 CurrentIndex);
 
 private:
 	TSubclassOf<UPSHUDWidget> HUDWidgetClass;

@@ -26,6 +26,9 @@ protected:
 
 public:
 
+    UFUNCTION()
+    void StopSpawningEnemies();
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
     bool bIsRowSpawner = false;
 
@@ -99,4 +102,6 @@ private:
     FTimerHandle FrequencyCheckTimerHandle;
 
     float LastSpawnDelay{ -1.0f };
+
+    bool bShouldSpawnEnemies{ true };
 };

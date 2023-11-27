@@ -143,7 +143,7 @@ void APSEnemy::UpdateDropChances()
 {
 	CustomDropChances.Add(EPickupItemType::OrangeScale, 95.0f);
 	CustomDropChances.Add(EPickupItemType::Speed, 4.0f);
-	CustomDropChances.Add(EPickupItemType::Health, 1.0f);
+	CustomDropChances.Add(EPickupItemType::Attack, 1.0f);
 }
 void APSEnemy::SpawnPickupItem()
 {

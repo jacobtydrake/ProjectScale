@@ -108,6 +108,22 @@ void APSHUD::UpdateHealthWidget(int32 NewHealth)
     }
 }
 
+void APSHUD::UpdateAttackPowerupWidget(const float Time)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->UpdateAttackWidget(Time);
+    }
+}
+
+void APSHUD::UpdateSpeedPowerupWidget(const float Time)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->UpdateSpeedWidget(Time);
+    }
+}
+
 void APSHUD::DisplayScoreScreen(const TMap<EPickupItemType, int32>& ItemCounts, int32 TotalScore)
 {
     if (ScoreScreenWidgetInstance)
@@ -115,5 +131,13 @@ void APSHUD::DisplayScoreScreen(const TMap<EPickupItemType, int32>& ItemCounts, 
         ScoreScreenWidgetInstance->SetTotalScore(TotalScore);
         ScoreScreenWidgetInstance->SetItemPickupCounts(ItemCounts);
         ScoreScreenWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void APSHUD::UpdateScoreScreenBoxVisibility(const int32 CurrentIndex)
+{
+    if (ScoreScreenWidgetInstance)
+    {
+        ScoreScreenWidgetInstance->SetBoxVisibility(CurrentIndex);
     }
 }

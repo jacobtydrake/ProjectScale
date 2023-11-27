@@ -22,7 +22,7 @@ enum class EPickupItemType : uint8
 	GoldScale UMETA(DisplayName = "Gold Scale"),
 	Health UMETA(DisplayName = "Health"),
 	Speed UMETA(DisplayName = "Speed"),
-	ScreenWipe UMETA(DisplayName = "ScreenWipe")
+	Attack UMETA(DisplayName = "Attack")
 };
 
 UCLASS()
@@ -94,7 +94,7 @@ public:
 	TObjectPtr<UPaperFlipbook> SpeedFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	TObjectPtr<UPaperFlipbook> ScreenWipeFlipbook;
+	TObjectPtr<UPaperFlipbook> AttackWipeFlipbook;
 
 
 private:

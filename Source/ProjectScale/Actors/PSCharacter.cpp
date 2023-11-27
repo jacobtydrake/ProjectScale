@@ -98,7 +98,6 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void APSCharacter::TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection)
 {
-
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 	if (CurrentTime - LastDamageTime >= DamageCooldown)
 	{
@@ -331,6 +330,7 @@ void APSCharacter::Die()
 	{
 		PC->OnCharacterDeath();
 	}
+	bIsMovementAllowed = false;
 }
 
 void APSCharacter::ApplySpeedBuff()
@@ -346,6 +346,11 @@ void APSCharacter::ApplySpeedBuff()
 	}
 	GetWorldTimerManager().ClearTimer(SpeedBuffTimerHandle);
 	GetWorldTimerManager().SetTimer(SpeedBuffTimerHandle, this, &APSCharacter::RevertSpeedBuff, SpeedBuffDuration);
+
+	if (CachedHUD)
+	{
+		CachedHUD->UpdateSpeedPowerupWidget(SpeedBuffDuration);
+	}
 }
 
 void APSCharacter::RevertSpeedBuff()
@@ -381,30 +386,24 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 		break;
 	
 	case EPickupItemType::Health:
-
 		CurrentHealth += 1;
 
 		if (CurrentHealth > MaxHealth)
 		{
+			CachedScoreController->AddItemToScore(EPickupItemType::OrangeScale); // pity point for wasted health item
 			CurrentHealth = MaxHealth;
 		}
-
 		if (CachedHUD)
 		{
 			CachedHUD->UpdateHealthWidget(CurrentHealth);
 		}
-
 		break;
 
 	case EPickupItemType::Speed:
-
 		ApplySpeedBuff();
-
 		break;
-
 	}
 }
-
 
 void APSCharacter::RevertSpriteColor()
 {

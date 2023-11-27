@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "PSGenericButton.generated.h"
 
+class UButton;
+
 /**
  * 
  */
@@ -14,4 +16,15 @@ class PROJECTSCALE_API UPSGenericButton : public UUserWidget
 {
 	GENERATED_BODY()
 	
+
+
+protected:
+	/* Overrides */
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnButtonClicked();
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> Button;
 };

@@ -53,9 +53,9 @@ void APSChasingEnemy::Die()
 void APSChasingEnemy::UpdateDropChances()
 {
     CustomDropChances.Add(EPickupItemType::BlueScale, 90.0f);
-    CustomDropChances.Add(EPickupItemType::Speed, 7.0f);
-    CustomDropChances.Add(EPickupItemType::Health, 3.0f);
-    CustomDropChances.Add(EPickupItemType::ScreenWipe, 0.5f);
+    CustomDropChances.Add(EPickupItemType::Speed, 6.0f);
+    CustomDropChances.Add(EPickupItemType::Health, 1.0f);
+    CustomDropChances.Add(EPickupItemType::Attack, 3.f);
 }
 
 void APSChasingEnemy::UpdateChaseBehavior()

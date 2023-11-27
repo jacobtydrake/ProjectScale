@@ -46,8 +46,8 @@ void UPSPickupItemWidgetComponent::ActivePickupItemWidget(const EPickupItemType 
     case EPickupItemType::Health:
         WidgetInst->SetText("+Health");
         break;
-    case EPickupItemType::ScreenWipe:
-        WidgetInst->SetText("ScreenWipe");
+    case EPickupItemType::Attack:
+        WidgetInst->SetText("+Attack");
         break;
     }
 

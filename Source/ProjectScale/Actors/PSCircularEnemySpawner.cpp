@@ -45,6 +45,13 @@ void APSCircularEnemySpawner::Tick(float DeltaTime)
     CurrentTime += DeltaTime;
 }
 
+void APSCircularEnemySpawner::StopSpawningEnemies()
+{
+    bShouldSpawnEnemies = false;
+    GetWorldTimerManager().ClearTimer(SpawnTimer);
+    GetWorldTimerManager().ClearTimer(IncrementTimerHandle);
+}
+
 void APSCircularEnemySpawner::SpawnEnemies(const int32 NumberOfEnemies)
 {
     if (!EnemyClass || NumberOfEnemies <= 0) return;
@@ -94,6 +101,8 @@ void APSCircularEnemySpawner::InitializeSpawnTimer()
 
 void APSCircularEnemySpawner::HandleEnemySpawn()
 {
+    if (!bShouldSpawnEnemies) return;
+
     if (bIsRowSpawner)
     {
         SpawnEnemyRow(CurrentNumberOfEnemiesInRow, RowSpacing);

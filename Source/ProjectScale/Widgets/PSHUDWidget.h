@@ -7,6 +7,7 @@
 #include "PSHUDWidget.generated.h"
 
 class UImage;
+class UPSPowerupWidget;
 
 
 /**
@@ -20,9 +21,19 @@ class PROJECTSCALE_API UPSHUDWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void UpdateHealth(int32 NewHealth);
+	UFUNCTION()
+	void UpdateAttackWidget(const float Time);
+	UFUNCTION()
+	void UpdateSpeedWidget(const float Time);
 
 
 protected:
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPSPowerupWidget> AttackPowerup;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPSPowerupWidget> SpeedPowerup;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image1;

@@ -22,5 +22,5 @@ void APSScaryFish::UpdateDropChances()
 {
 	CustomDropChances.Add(EPickupItemType::BlackScale, 90.0f);
 	CustomDropChances.Add(EPickupItemType::Health, 5.0f);
-	CustomDropChances.Add(EPickupItemType::ScreenWipe, 5.0f);
+	CustomDropChances.Add(EPickupItemType::Attack, 5.0f);
 }

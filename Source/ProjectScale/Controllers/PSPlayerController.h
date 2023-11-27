@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class APSHUD;
 class UPSScoreController;
+class ACameraActor;
 
 /**
  * 
@@ -30,6 +31,9 @@ public:
 	UFUNCTION()
 	void OnCharacterDeath();
 
+	UFUNCTION(BlueprintCallable)
+	void StartScoreScreenProcess();
+
 	/* Getters */
 	UFUNCTION()
 	APSHUD* GetPSHUD() const { return CachedHUD; }
@@ -39,6 +43,8 @@ public:
 
 protected:
 
+	void Cleanup();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> PlayerCharacterMappingContext;
 
@@ -47,5 +53,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UPSScoreController> PSScoreController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	TSubclassOf<ACameraActor> SelectedCameraClass;
 
 };

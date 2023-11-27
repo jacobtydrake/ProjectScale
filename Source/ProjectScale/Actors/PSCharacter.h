@@ -187,7 +187,6 @@ private:
 
 	bool bIsSpeedBuffActive = false;
 
-
 	// Original attack cooldown
 	float OriginalAttackCooldown;
 
