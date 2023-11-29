@@ -133,6 +133,19 @@ void APSEnemy::Die()
 	// Apply launch impulse
 	CapsuleComp->AddImpulse(DamagedLaunchDirection * LaunchStrength, NAME_None, true);
 
+	// flip flipbook based on launch direction
+	FRotator NewRotation = FlipbookComp->GetComponentRotation();
+	if (DamagedLaunchDirection.X >= 0)
+	{
+		NewRotation.Yaw = 0.0f;
+	}
+	else
+	{
+		NewRotation.Yaw = 180.0f;
+	}
+
+	FlipbookComp->SetWorldRotation(NewRotation);
+
 
 	FTimerHandle SpawnItemTimerHandle;
 	GetWorldTimerManager().SetTimer(SpawnItemTimerHandle, this, &APSEnemy::SpawnPickupItem, DelayBeforeSpawn, false);
@@ -141,9 +154,9 @@ void APSEnemy::Die()
 }
 void APSEnemy::UpdateDropChances()
 {
-	CustomDropChances.Add(EPickupItemType::OrangeScale, 95.0f);
-	CustomDropChances.Add(EPickupItemType::Speed, 4.0f);
-	CustomDropChances.Add(EPickupItemType::Attack, 1.0f);
+	CustomDropChances.Add(EPickupItemType::OrangeScale, 99.0f);
+	CustomDropChances.Add(EPickupItemType::Speed, .80f);
+	CustomDropChances.Add(EPickupItemType::Attack, 0.20f);
 }
 void APSEnemy::SpawnPickupItem()
 {

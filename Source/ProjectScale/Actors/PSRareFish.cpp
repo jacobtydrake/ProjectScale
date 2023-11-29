@@ -11,6 +11,6 @@ APSRareFish::APSRareFish()
 
 void APSRareFish::UpdateDropChances()
 {
-    CustomDropChances.Add(EPickupItemType::GoldScale, 100.0f);
+    CustomDropChances.Add(EPickupItemType::GoldScale, 95.0f);
     CustomDropChances.Add(EPickupItemType::Health, 5.0f);
 }

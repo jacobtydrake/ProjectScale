@@ -32,6 +32,10 @@ public:
 	const bool GetIsDead() const { return bIsDead; }
 	UFUNCTION(BlueprintCallable)
 	const FVector2D Get2DMovementDirection() const { return FVector2D(MovementDirection.X, -MovementDirection.Y); }
+	UFUNCTION()
+	const FVector GetMovementDirection() const { return MovementDirection; }
+	UFUNCTION()
+	virtual void OnCharacterDeath() { bIsCharacterDead = true; }
 
 
 	UFUNCTION(BlueprintCallable)
@@ -81,7 +85,7 @@ protected:
 	int32 CurrentHealth;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float MovementSpeed{ 120 };
+	float MovementSpeed{ 135 };
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	FVector MovementDirection{ 1,0,0 };
@@ -94,6 +98,9 @@ protected:
 
 	UPROPERTY()
 	bool bIsDead{ false };
+
+	UPROPERTY()
+	bool bIsCharacterDead{ false };
 
 	UPROPERTY(EditAnywhere)
 	TMap<EPickupItemType, float> CustomDropChances;

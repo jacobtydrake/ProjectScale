@@ -26,6 +26,7 @@ protected:
 
 	virtual void Die() override;
 	virtual void UpdateDropChances() override;
+	virtual void OnCharacterDeath() override;
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -46,7 +47,7 @@ protected:
 	float LastAttackTime{ 0.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	float AttackCooldown{ .80f };
+	float AttackCooldown{ .40f };
 
 	FTimerManager* TimerManager;
 

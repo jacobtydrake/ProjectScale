@@ -30,6 +30,22 @@ void APSPlayerController::BeginPlay()
 	}
 
 	PSScoreController = NewObject<UPSScoreController>(this);
+
+	// Cache PSCharacter
+	TArray<AActor*> FoundCharacters;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSCharacter::StaticClass(), FoundCharacters);
+	if (FoundCharacters.Num() > 0)
+	{
+		CachedCharacter = Cast<APSCharacter>(FoundCharacters[0]);
+	}
+
+	// Cache Camera
+	TArray<AActor*> FoundCameras;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), SelectedCameraClass, FoundCameras);
+	if (FoundCameras.Num() > 0)
+	{
+		CachedCameraActor = Cast<ACameraActor>(FoundCameras[0]);
+	}
 }
 
 void APSPlayerController::OnPauseButtonPressed()
@@ -83,23 +99,27 @@ void APSPlayerController::OnCharacterDeath()
 			Spawner->StopSpawningEnemies();
 		}
 	}
-
-	if (SelectedCameraClass)
+	if (CachedCharacter)
 	{
-		TArray<AActor*> FoundActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SelectedCameraClass, FoundActors);
-		if (FoundActors.Num() > 0)
+		ReverseEnemyDirections();
+		FVector CharacterLocation = CachedCharacter->GetActorLocation();
+		FVector CameraOffset(-275.0f, 575.0f, 300.0f);
+		FVector CameraLocation = CharacterLocation + CameraOffset;
+
+		if (CachedCameraActor)
 		{
-			AActor* CameraActor = FoundActors[0];
-			SetViewTargetWithBlend(CameraActor, 3.0f);
+			CachedCameraActor->SetActorLocation(CameraLocation);
+			SetViewTargetWithBlend(CachedCameraActor, 3.0f);
 		}
 	}
+
 
 	if (PSScoreController && CachedHUD && PSScoreController)
 	{
 		PSScoreController->InitializeCachedHUD(CachedHUD);
 		int32 TotalScore = PSScoreController->GetTotalScore();
 		TMap<EPickupItemType, int32> ItemCounts = PSScoreController->GetItemPickupCounts();
+		CachedHUD->SetHUDWidgetVisibility(false);
 		CachedHUD->DisplayScoreScreen(ItemCounts, TotalScore);
 	}
 }
@@ -108,13 +128,37 @@ void APSPlayerController::StartScoreScreenProcess()
 {
 	Cleanup();
 
+	FVector ScaleSpawnLocation = CachedCharacter->GetActorLocation();
+	ScaleSpawnLocation.Z = 600;
+
 	if (PSScoreController)
 	{
-		PSScoreController->StartSpawningScales(FVector(0.0f, 0.0f, 750.0f), 3.0f, 0.1f, FVector(200.0f, 200.0f, 0.0f));
+		PSScoreController->StartSpawningScales(ScaleSpawnLocation, 3.0f, 0.1f, FVector(100.0f, 100.0f, 0.0f));
 	}
 }
 
-void APSPlayerController::Cleanup() // really shouldn't be in player controller, but oh well
+void APSPlayerController::ReverseEnemyDirections()
+{
+	FVector CharacterLocation = CachedCharacter->GetActorLocation();
+
+	TArray<AActor*> EnemyActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), EnemyActors);
+
+	for (AActor* Actor : EnemyActors)
+	{
+		if (APSEnemy* Enemy = Cast<APSEnemy>(Actor))
+		{
+			Enemy->OnCharacterDeath();
+			FVector EnemyLocation = Enemy->GetActorLocation();
+			FVector ToCharacter = FVector(CharacterLocation.X, CharacterLocation.Y, EnemyLocation.Z) - EnemyLocation;
+			FVector OppositeDirection = -ToCharacter.GetSafeNormal();
+
+			Enemy->InitializeDirection(OppositeDirection);
+		}
+	}
+}
+
+void APSPlayerController::Cleanup()
 {
 	TArray<AActor*> Actors;
 	// destroy all enemies
@@ -132,14 +176,4 @@ void APSPlayerController::Cleanup() // really shouldn't be in player controller,
 		Actor->Destroy();
 	}
 	Actors.Empty();
-
-	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), APSCharacter::StaticClass()))
-	{
-		//if (APSCharacter* MyPSCharacter = Cast<APSCharacter>(Actor))
-		//{
-		//	MyPSCharacter->SetActorLocation(FVector)
-		//}
-
-		Actor->SetActorHiddenInGame(true);
-	}
 }

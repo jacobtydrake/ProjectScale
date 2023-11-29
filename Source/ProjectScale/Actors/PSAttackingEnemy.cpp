@@ -39,10 +39,20 @@ void APSAttackingEnemy::Die()
 
 void APSAttackingEnemy::UpdateDropChances()
 {
-	CustomDropChances.Add(EPickupItemType::PurpleScale, 90.0f);
-	CustomDropChances.Add(EPickupItemType::Speed, 5.0f);
-	CustomDropChances.Add(EPickupItemType::Health, 1.0f);
-	CustomDropChances.Add(EPickupItemType::Attack, 4.0f);
+	CustomDropChances.Add(EPickupItemType::PurpleScale, 95.0f);
+	CustomDropChances.Add(EPickupItemType::Speed, 2.0f);
+	CustomDropChances.Add(EPickupItemType::Health, 0.5f);
+	CustomDropChances.Add(EPickupItemType::Attack, 2.0f);
+}
+
+void APSAttackingEnemy::OnCharacterDeath()
+{
+	Super::OnCharacterDeath();
+
+	if (AttackLoopTimerHandle.IsValid())
+	{
+		TimerManager->ClearTimer(AttackLoopTimerHandle);
+	}
 }
 
 void APSAttackingEnemy::PerformAttack()

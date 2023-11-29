@@ -21,8 +21,9 @@ public:
 
 protected:
     /* Overrides */
+    virtual void NativeConstruct() override;
     virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-    virtual void NativePreConstruct() override;
+
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<URadialSlider> PowerupRadialSlider;

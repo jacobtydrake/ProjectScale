@@ -24,8 +24,10 @@ protected:
 public:
 	UFUNCTION()
 	void SetTeamTag(const FName TeamTagName) { TeamTag = TeamTagName; }
-
+	UFUNCTION()
 	const bool GetIsDamageCollisionActive() const { return bIsDamageCollisionActive;  }
+	UFUNCTION()
+	void SetDamageCollisionSize(const FVector NewSize);
 
 	TObjectPtr<UBoxComponent> GetDamageCollisionBox();
 	UFUNCTION(BlueprintCallable, Category = "Damage")

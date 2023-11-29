@@ -141,3 +141,12 @@ void APSHUD::UpdateScoreScreenBoxVisibility(const int32 CurrentIndex)
         ScoreScreenWidgetInstance->SetBoxVisibility(CurrentIndex);
     }
 }
+
+void APSHUD::SetHUDWidgetVisibility(const bool bIsVisible)
+{
+    const ESlateVisibility NewVisibiity = bIsVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->SetVisibility(NewVisibiity);
+    }
+}

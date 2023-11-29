@@ -100,13 +100,19 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	float Lifespan = 25.0f; 
+	float Lifespan{ 25.0f };
 	UPROPERTY(EditAnywhere)
-	float FlashTime = 8.0f;
+	float FlashTime{ 8.0f };
 
 	FTimerHandle FlashTimerHandle;
 
 	void StartFlashing();
 	void FlashEffect();
+
+	/* item bob properties */
+	float RunningTime{ 0.0f };
+	float BobSpeed{ 2.5f };
+	float BobAmplitude{ 12.0f };
+	float InitialZ{ 105.f };
 
 };

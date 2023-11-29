@@ -10,7 +10,7 @@ class UInputMappingContext;
 class APSHUD;
 class UPSScoreController;
 class ACameraActor;
-
+class APSCharacter;
 /**
  * 
  */
@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartScoreScreenProcess();
 
+	UFUNCTION()
+	void ReverseEnemyDirections();
+
 	/* Getters */
 	UFUNCTION()
 	APSHUD* GetPSHUD() const { return CachedHUD; }
@@ -56,5 +59,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TSubclassOf<ACameraActor> SelectedCameraClass;
+
+private:
+	TObjectPtr<APSCharacter> CachedCharacter;
+	TObjectPtr<ACameraActor> CachedCameraActor;
 
 };

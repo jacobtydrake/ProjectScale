@@ -54,7 +54,7 @@ void APSPickupItem::BeginPlay()
     if (SceneComp)
     {
         const FVector ComponentLocation = SceneComp->GetComponentLocation();
-        const FVector AdjustedWorldLocation = FVector(ComponentLocation.X, ComponentLocation.Y, 100);
+        const FVector AdjustedWorldLocation = FVector(ComponentLocation.X, ComponentLocation.Y, InitialZ);
         SceneComp->SetRelativeLocation(AdjustedWorldLocation);
         SceneComp->SetWorldRotation(FRotator(0, 0, 0));
     }
@@ -63,6 +63,13 @@ void APSPickupItem::BeginPlay()
 void APSPickupItem::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    // bobbing effect
+    FVector NewLocation = GetActorLocation();
+    float DeltaHeight = FMath::Sin(RunningTime * BobSpeed) * BobAmplitude;
+    NewLocation.Z = InitialZ + DeltaHeight;
+    RunningTime += DeltaTime;
+    SetActorLocation(NewLocation);
 }
 
 void APSPickupItem::InitializePickupItem(const TMap<EPickupItemType, float>& NewItemChances)

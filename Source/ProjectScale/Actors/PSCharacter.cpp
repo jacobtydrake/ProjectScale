@@ -18,6 +18,7 @@
 #include "ProjectScale/Controllers/PSScoreController.h"
 #include "ProjectScale/Components/PSVacuumComponent.h"
 #include "ProjectScale/Utils/PSGlobals.h"
+#include "ProjectScale/Actors/PSWooshEffect.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -98,6 +99,8 @@ void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void APSCharacter::TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection)
 {
+	if (bIsDead) return;
+
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 	if (CurrentTime - LastDamageTime >= DamageCooldown)
 	{
@@ -196,6 +199,10 @@ void APSCharacter::Attack()
 		UE_LOG(PSCharacter, Display, TEXT("Combo attack is already in progress"));
 		return;
 	}
+	else if (bIsDead)
+	{
+		return;
+	}
 
 	if (!bIsAttacking)
 	{
@@ -207,6 +214,8 @@ void APSCharacter::Attack()
 		bIsMovementAllowed = false;
 
 		ToggleDamageComp(true);
+
+		const float BoostPower = bIsAttackBuffActive ? BoostedAttackThrustPower : AttackThrustPower;
 		ApplyAttackBoost(AttackThrustPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::OnFirstAttackAnimationEnd, FirstAttackAnimationLength, false);
@@ -222,7 +231,9 @@ void APSCharacter::Attack()
 
 			OnComboAttackRequested(LastMoveDirection);
 			ToggleDamageComp(true);
-			ApplyAttackBoost(ComboAttackThrustPower);
+
+			const float BoostPower = bIsAttackBuffActive ? BoostedComboAttackThrustPower : ComboAttackThrustPower;
+			ApplyAttackBoost(BoostPower);
 
 			GetWorldTimerManager().ClearTimer(AttackTimerHandle);
 			GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::StopAttackAnim, SecondAttackAnimationLength, false);
@@ -259,6 +270,7 @@ void APSCharacter::ToggleDamageComp(const bool bShouldActiveCollision)
 void APSCharacter::OnFirstAttackAnimationEnd()
 {
 	ToggleDamageComp(false);
+	//WooshEffectComp->SetVisibility(false);
 
 	if (bIsComboAttackQueued)
 	{
@@ -285,7 +297,7 @@ void APSCharacter::StopAttackAnim()
 	LastAttackEndTime = GetWorld()->GetTimeSeconds();
 
 	ToggleDamageComp(false);
-
+	//WooshEffectComp->SetVisibility(false);
 	bIsMovementAllowed = true;
 }
 
@@ -326,11 +338,23 @@ void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 
 void APSCharacter::Die()
 {
+	bIsDead = true;
 	if (APSPlayerController* PC = Cast<APSPlayerController>(GetController()))
 	{
 		PC->OnCharacterDeath();
 	}
 	bIsMovementAllowed = false;
+
+	// Flip the sprite so character is facing score screen :)
+	FVector FlippedSpriteScale = GetSprite()->GetComponentScale();
+	GetSprite()->SetWorldScale3D(FVector(-FlippedSpriteScale.X, FlippedSpriteScale.Y, FlippedSpriteScale.Z));
+
+	GetWorldTimerManager().ClearTimer(SpeedBuffTimerHandle);
+	GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+	GetWorldTimerManager().ClearTimer(ComboWindowTimerHandle);
+	GetWorldTimerManager().ClearTimer(InputBufferTimerHandle);
+	bIsComboAttackQueued = false;
+	bIsAttacking = false;
 }
 
 void APSCharacter::ApplySpeedBuff()
@@ -340,7 +364,6 @@ void APSCharacter::ApplySpeedBuff()
 		OriginalAttackCooldown = AttackCooldown;
 
 		GetCharacterMovement()->MaxWalkSpeed *= SpeedBuffMultiplier;
-		AttackCooldown = ReducedAttackCooldown;
 
 		bIsSpeedBuffActive = true;
 	}
@@ -356,9 +379,34 @@ void APSCharacter::ApplySpeedBuff()
 void APSCharacter::RevertSpeedBuff()
 {
 	GetCharacterMovement()->MaxWalkSpeed /= SpeedBuffMultiplier;
-	AttackCooldown = OriginalAttackCooldown;
 
 	bIsSpeedBuffActive = false;
+}
+
+void APSCharacter::ApplyAttackBuff()
+{
+	if (!bIsAttackBuffActive && DamageComp)
+	{
+		DamageComp->SetDamageCollisionSize(IncreasedAttackBounds);
+		bIsAttackBuffActive = true;
+		AttackCooldown = ReducedAttackCooldown;
+	}
+	GetWorldTimerManager().SetTimer(AttackBuffTimerHandle, this, &APSCharacter::RevertAttackBuff, AttackBuffDuration);
+
+	if (CachedHUD)
+	{
+		CachedHUD->UpdateAttackPowerupWidget(AttackBuffDuration);
+	}
+}
+
+void APSCharacter::RevertAttackBuff()
+{
+	if (DamageComp)
+	{
+		DamageComp->SetDamageCollisionSize(OriginalAttackBounds);
+	}
+	bIsAttackBuffActive = false;
+	AttackCooldown = OriginalAttackCooldown;
 }
 
 void APSCharacter::OnItemPickup(EPickupItemType ItemType)
@@ -384,7 +432,7 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 	case EPickupItemType::GoldScale:
 		CachedScoreController->AddItemToScore(ItemType);
 		break;
-	
+
 	case EPickupItemType::Health:
 		CurrentHealth += 1;
 
@@ -401,6 +449,14 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 
 	case EPickupItemType::Speed:
 		ApplySpeedBuff();
+		break;
+
+	case EPickupItemType::Attack:
+		ApplyAttackBuff();
+		break;
+
+	default:
+		CachedScoreController->AddItemToScore(ItemType);
 		break;
 	}
 }

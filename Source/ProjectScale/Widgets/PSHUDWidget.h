@@ -26,8 +26,35 @@ public:
 	UFUNCTION()
 	void UpdateSpeedWidget(const float Time);
 
-
 protected:
+	void PlayHealthGainAnimation(int32 HealthIndex);
+	void PlayHealthLossAnimation(int32 HealthIndex);
+	/**/
+	void UpdateHealthGainSprite();
+	void UpdateHealthLossSprite();
+
+	TObjectPtr<UImage> GetImageForHealthIndex(int32 HealthIndex);
+
+
+
+	/**/
+	UPROPERTY(EditAnywhere, Category = "Health Animation")
+	TArray<TObjectPtr<UTexture2D>> HealthGainSprites;
+
+	UPROPERTY(EditAnywhere, Category = "Health Animation")
+	TArray<TObjectPtr<UTexture2D>> HealthLossSprites;
+
+	/**/
+	float AnimationDelay{ 0.1f }; 
+	int32 CurrentHealthIndex{ 3 };
+	bool bIsAnimatingHealthGain{ false };
+
+	int32 CurrentAnimationHealthIndex;
+	int32 CurrentAnimationSpriteIndex;
+
+	/**/
+	FTimerHandle HealthGainTimerHandle;
+	FTimerHandle HealthLossTimerHandle;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UPSPowerupWidget> AttackPowerup;

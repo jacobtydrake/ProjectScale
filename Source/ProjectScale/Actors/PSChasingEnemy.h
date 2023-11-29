@@ -63,24 +63,24 @@ protected:
 	float ChaseRange{ 800.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float AttackRange{ 250.0f };
+	float AttackRange{ 350.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float AttackDamage{ 1.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float AttackThrustPower{ 1000.0f };
+	float AttackThrustPower{ 1050.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float TotalAttackDuration{ 1.4f };
+	float TotalAttackDuration{ 1.3f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
-	float AttackHurtDuration{ 0.2f };
+	float AttackHurtDuration{ 0.25f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack Behavior")
 	float TotalLaunchDuration{ 0.3f };
 
-	float AttackToLaunchDelay{ .5f };
+	float AttackToLaunchDelay{ .35f };
 
 	FVector LaunchVelocity{ 0, 0, 0 };
 

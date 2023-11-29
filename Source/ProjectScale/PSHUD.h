@@ -48,6 +48,9 @@ public:
 	UFUNCTION()
 	void UpdateScoreScreenBoxVisibility(const int32 CurrentIndex);
 
+	UFUNCTION()
+	void SetHUDWidgetVisibility(const bool bIsVisible);
+
 private:
 	TSubclassOf<UPSHUDWidget> HUDWidgetClass;
 	TSubclassOf<UPSPauseScreen> PauseWidgetClass;

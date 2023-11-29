@@ -17,6 +17,11 @@ UPSDamageComponent::UPSDamageComponent()
     DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &UPSDamageComponent::OnDamageCollisionOverlap);
 }
 
+void UPSDamageComponent::SetDamageCollisionSize(const FVector NewSize)
+{
+    DamageCollision->SetBoxExtent(NewSize);
+}
+
 TObjectPtr<UBoxComponent> UPSDamageComponent::GetDamageCollisionBox()
 {
     return DamageCollision;
@@ -88,27 +93,25 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
             NewRelativeLocation.Y = MovementDirection.Y > 0 ? VerticalOffset : -VerticalOffset;
         }
 
-        // Update the damage collision's location
         DamageCollision->SetRelativeLocation(NewRelativeLocation);
-
     }
 
     // debug visualization
-    //if (DamageCollision->IsCollisionEnabled())
-    //{
-    //    DrawDebugBox
-    //    (
-    //        GetWorld(),
-    //        DamageCollision->GetComponentLocation(),
-    //        DamageCollision->GetScaledBoxExtent(),
-    //        FQuat(DamageCollision->GetComponentRotation()),
-    //        FColor::Red,
-    //        false,
-    //        -1.f, // Duration
-    //        0,
-    //        2
-    //    );
-    //}
+    if (DamageCollision->IsCollisionEnabled())
+    {
+        DrawDebugBox
+        (
+            GetWorld(),
+            DamageCollision->GetComponentLocation(),
+            DamageCollision->GetScaledBoxExtent(),
+            FQuat(DamageCollision->GetComponentRotation()),
+            FColor::Red,
+            false,
+            -1.f, // Duration
+            0,
+            2
+        );
+    }
 }
 
 void UPSDamageComponent::OnDamageCollisionOverlap

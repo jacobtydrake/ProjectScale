@@ -157,9 +157,9 @@ int32 UPSScoreController::CalculateScoreForItem(EPickupItemType ItemType) const
 {
     switch (ItemType)
     {
-    case EPickupItemType::BlueScale:
-        return 1;
     case EPickupItemType::OrangeScale:
+        return 1;
+    case EPickupItemType::BlueScale:
         return 2; 
     case EPickupItemType::PurpleScale:
         return 3;

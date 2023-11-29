@@ -2,13 +2,12 @@
 
 
 #include "PSPowerupWidget.h"
-#include "UMG.h"
 #include "Components/RadialSlider.h"
+#include "Kismet/GameplayStatics.h"
 
-void UPSPowerupWidget::NativePreConstruct()
+void UPSPowerupWidget::NativeConstruct()
 {
-    Super::NativePreConstruct();
-
+    Super::NativeConstruct();
     SetVisibility(ESlateVisibility::Collapsed);
 }
 
@@ -17,13 +16,18 @@ void UPSPowerupWidget::InitializeTimer(float Duration)
     TotalTime = Duration;
     RemainingTime = Duration;
     SetVisibility(ESlateVisibility::Visible);
+
+    if (PowerupRadialSlider)
+    {
+        PowerupRadialSlider->SetValue(1.0f);
+    }
 }
 
 void UPSPowerupWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 
-    if (RemainingTime > 0)
+    if (!UGameplayStatics::IsGamePaused(GetWorld()) && RemainingTime > 0)
     {
         RemainingTime -= InDeltaTime;
         if (PowerupRadialSlider)
@@ -31,7 +35,7 @@ void UPSPowerupWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
             PowerupRadialSlider->SetValue(RemainingTime / TotalTime);
         }
     }
-    else
+    else if (RemainingTime <= 0)
     {
         SetVisibility(ESlateVisibility::Collapsed);
     }

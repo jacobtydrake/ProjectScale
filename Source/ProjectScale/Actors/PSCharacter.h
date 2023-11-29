@@ -41,6 +41,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const bool GetIsAttacking() const { return bIsAttacking; }
 	UFUNCTION(BlueprintCallable)
+	const bool GetIsDead() const { return bIsDead; }
+	UFUNCTION(BlueprintCallable)
 	const bool GetPlaySecondAttack() const { return bPlaySecondAttack; }
 
 	UFUNCTION()
@@ -85,6 +87,7 @@ protected:
 	UFUNCTION()
 	void ApplyAttackBoost(const float ThrustPower);
 
+	/* :( */
 	UFUNCTION()
 	void Die();
 
@@ -93,6 +96,12 @@ protected:
 	void ApplySpeedBuff();
 	UFUNCTION()
 	void RevertSpeedBuff();
+
+	/* Attack Buff */
+	UFUNCTION()
+	void ApplyAttackBuff();
+	UFUNCTION()
+	void RevertAttackBuff();
 
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -113,7 +122,6 @@ private:
 	bool bIsHoldingMove{ false };
 	ELastHorizontalMoveDirection LastHorizontalMoveDirection{ ELastHorizontalMoveDirection::Left };
 	ELastMoveDirection LastMoveDirection{ ELastMoveDirection::Left };
-
 
 	UPROPERTY()
 	int32 CurrentHealth{ 0 };
@@ -141,7 +149,7 @@ private:
 
 	/* Time required to pass before character can attack again. */
 	UPROPERTY(EditAnywhere)
-	float AttackCooldown{ 0.5f };
+	float AttackCooldown{ 0.7f };
 
 	/* Used to track the time between inputs for the AttackCooldown. */
 	float LastAttackEndTime{ 0.0f };
@@ -152,7 +160,7 @@ private:
 	bool bIsComboAttackExecuting{ false };
 	bool bIsComboAttackQueued{ false };
 
-	/* Timers */
+	/* Attack Timers */
 	FTimerHandle AttackTimerHandle;
 	FTimerHandle ComboWindowTimerHandle;
 	FTimerHandle InputBufferTimerHandle;
@@ -160,9 +168,15 @@ private:
 
 	/* Boost Modifiers */
 	UPROPERTY(EditAnywhere)
-	float AttackThrustPower = 2000.0f;
+	float AttackThrustPower{ 2000.0f };
 	UPROPERTY(EditAnywhere)
-	float ComboAttackThrustPower = 1400.0f;
+	float ComboAttackThrustPower{ 1400.0f };
+
+	/* Boost Modifiers */
+	UPROPERTY(EditAnywhere)
+	float BoostedAttackThrustPower{ 2500.0f };
+	UPROPERTY(EditAnywhere)
+	float BoostedComboAttackThrustPower{ 2000.0f };
 
 	/* flag for disabling movement while attacking or dying */
 	bool bIsMovementAllowed{ true };
@@ -176,23 +190,32 @@ private:
 
 	/* Speed buff properties */
 	UPROPERTY(EditAnywhere, Category = "Speed Buff")
-	float SpeedBuffMultiplier = 1.25f; 
+	float SpeedBuffMultiplier{ 1.25f };
 	UPROPERTY(EditAnywhere, Category = "Speed Buff")
-	float SpeedBuffDuration = 10.0f; 
-	UPROPERTY(EditAnywhere, Category = "Speed Buff")
-	float ReducedAttackCooldown = 0.3f;
-
+	float SpeedBuffDuration{ 10.0f } ;
 	/* Speed Buff Timer handle */
 	FTimerHandle SpeedBuffTimerHandle;
-
 	bool bIsSpeedBuffActive = false;
 
-	// Original attack cooldown
-	float OriginalAttackCooldown;
+	/* Attack buff properties */
+	bool bIsAttackBuffActive = false;
+	UPROPERTY(EditAnywhere, Category = "Attack buff Buff")
+	FVector OriginalAttackBounds{ 50.0f, 50.0f, 50.0f };
+	UPROPERTY(EditAnywhere, Category = "Attack buff Buff")
+	FVector IncreasedAttackBounds{ 75.0f, 75.0f, 50.0f };
+	UPROPERTY(EditAnywhere, Category = "Attack buff Buff")
+	float AttackBuffDuration{ 10.0f };
+	UPROPERTY(EditAnywhere, Category = "Attack buff Buff")
+	float ReducedAttackCooldown{ 0.2f };
+	FTimerHandle AttackBuffTimerHandle;
+	float OriginalAttackCooldown{0.7f};
 
 	/* Cached */
 	UPROPERTY()
 	TObjectPtr<APSHUD> CachedHUD;
 	UPROPERTY()
 	TObjectPtr<UPSScoreController> CachedScoreController;
+
+	/* womp womp */
+	bool bIsDead{ false };
 };

@@ -12,6 +12,7 @@ APSChasingEnemy::APSChasingEnemy()
 {
     DamageComp = CreateDefaultSubobject<UPSDamageComponent>(TEXT("DamageComponent"));
     DamageComp->SetTeamTag("Enemy");
+    MovementSpeed = 150;
 }
 
 void APSChasingEnemy::BeginPlay()
@@ -29,7 +30,7 @@ void APSChasingEnemy::BeginPlay()
 
 void APSChasingEnemy::Tick(float DeltaTime)
 {
-   if (!bIsAttacking)
+   if (!bIsAttacking && !bIsCharacterDead)
    {
        UpdateChaseBehavior();
    }
@@ -52,10 +53,10 @@ void APSChasingEnemy::Die()
 
 void APSChasingEnemy::UpdateDropChances()
 {
-    CustomDropChances.Add(EPickupItemType::BlueScale, 90.0f);
-    CustomDropChances.Add(EPickupItemType::Speed, 6.0f);
-    CustomDropChances.Add(EPickupItemType::Health, 1.0f);
-    CustomDropChances.Add(EPickupItemType::Attack, 3.f);
+    CustomDropChances.Add(EPickupItemType::BlueScale, 97.50f);
+    CustomDropChances.Add(EPickupItemType::Speed, 1.0f);
+    CustomDropChances.Add(EPickupItemType::Health, 0.5f);
+    CustomDropChances.Add(EPickupItemType::Attack, 1.0f);
 }
 
 void APSChasingEnemy::UpdateChaseBehavior()
@@ -85,7 +86,6 @@ void APSChasingEnemy::UpdateChaseBehavior()
 
 void APSChasingEnemy::PerformAttack()
 {
-    UE_LOG(PSEnemy, Display, TEXT("Enemy Performing Attack..."));
     GetWorldTimerManager().SetTimer(LaunchDelayTimerHandle, this, &APSChasingEnemy::StartLaunch, AttackToLaunchDelay, false);
     GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSChasingEnemy::EndAttack, TotalAttackDuration, false);
     LastAttackTime = GetWorld()->GetTimeSeconds();
