@@ -8,11 +8,9 @@ APSDestructionZone::APSDestructionZone()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-    // Create and attach the trigger volume
     TriggerVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerVolume"));
     RootComponent = TriggerVolume;
 
-    // Configure the trigger volume
     TriggerVolume->SetCollisionProfileName(TEXT("Trigger"));
     TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APSDestructionZone::OnOverlapBegin);
 }
@@ -32,7 +30,6 @@ void APSDestructionZone::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 {
     if (OtherActor && (OtherActor != this))
     {
-        // Destroy the actor
         OtherActor->Destroy();
     }
 }

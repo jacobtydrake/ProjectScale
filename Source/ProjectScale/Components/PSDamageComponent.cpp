@@ -1,3 +1,4 @@
+// Written by Jacob Drake - 2023
 
 #include "PSDamageComponent.h"
 #include "Components/BoxComponent.h"
@@ -97,21 +98,21 @@ void UPSDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
     }
 
     // debug visualization
-    if (DamageCollision->IsCollisionEnabled())
-    {
-        DrawDebugBox
-        (
-            GetWorld(),
-            DamageCollision->GetComponentLocation(),
-            DamageCollision->GetScaledBoxExtent(),
-            FQuat(DamageCollision->GetComponentRotation()),
-            FColor::Red,
-            false,
-            -1.f, // Duration
-            0,
-            2
-        );
-    }
+    //if (DamageCollision->IsCollisionEnabled())
+    //{
+    //    DrawDebugBox
+    //    (
+    //        GetWorld(),
+    //        DamageCollision->GetComponentLocation(),
+    //        DamageCollision->GetScaledBoxExtent(),
+    //        FQuat(DamageCollision->GetComponentRotation()),
+    //        FColor::Red,
+    //        false,
+    //        -1.f, // Duration
+    //        0,
+    //        2
+    //    );
+    //}
 }
 
 void UPSDamageComponent::OnDamageCollisionOverlap

@@ -5,6 +5,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "PSPickupItem.h"
 #include "ProjectScale/Utils/PSGlobals.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(PSEnemy);
 
@@ -29,6 +31,7 @@ APSEnemy::APSEnemy()
 	FlipbookComp->SetCollisionProfileName(TEXT("DefaultEnemyCollision"));
 	FlipbookComp->SetGenerateOverlapEvents(true);
 	FlipbookComp->SetRelativeRotation(PSGlobals::SpriteRotation);
+	DeadRotation = PSGlobals::SpriteRotation;
 
 	DeathEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DeathEffect"));
 	DeathEffect->SetupAttachment(RootComponent);
@@ -75,8 +78,7 @@ void APSEnemy::Tick(float DeltaTime)
 
 	if (bIsDead)
 	{
-		FRotator UprightRotation = PSGlobals::SpriteRotation;
-		FlipbookComp->SetWorldRotation(UprightRotation);
+		FlipbookComp->SetWorldRotation(PSGlobals::SpriteRotation);
 	}
 }
 
@@ -130,25 +132,23 @@ void APSEnemy::Die()
 
 	float LaunchStrength = 1000.0f; // #TODO: make var
 
-	// Apply launch impulse
 	CapsuleComp->AddImpulse(DamagedLaunchDirection * LaunchStrength, NAME_None, true);
 
-	// flip flipbook based on launch direction
-	FRotator NewRotation = FlipbookComp->GetComponentRotation();
-	if (DamagedLaunchDirection.X >= 0)
+	// flip sprite
+	if (DamagedLaunchDirection.X > 0)
 	{
-		NewRotation.Yaw = 0.0f;
+		FVector NewScale = FlipbookComp->GetComponentScale();
+		NewScale.X = -1;
+		FlipbookComp->SetWorldScale3D(NewScale);
 	}
-	else
-	{
-		NewRotation.Yaw = 180.0f;
-	}
-
-	FlipbookComp->SetWorldRotation(NewRotation);
-
 
 	FTimerHandle SpawnItemTimerHandle;
 	GetWorldTimerManager().SetTimer(SpawnItemTimerHandle, this, &APSEnemy::SpawnPickupItem, DelayBeforeSpawn, false);
+
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySound2D(this, DeathSound);
+	}
 
 	SetLifeSpan(DestructionDelay);
 }

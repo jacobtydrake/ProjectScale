@@ -10,8 +10,9 @@
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 #include "ProjectScale/Utils/PSGlobals.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values
 APSPickupItem::APSPickupItem()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -70,6 +71,12 @@ void APSPickupItem::Tick(float DeltaTime)
     NewLocation.Z = InitialZ + DeltaHeight;
     RunningTime += DeltaTime;
     SetActorLocation(NewLocation);
+
+    if (!bIsInCircle)
+    {
+        MoveTowardsCircle(DeltaTime);
+    }
+
 }
 
 void APSPickupItem::InitializePickupItem(const TMap<EPickupItemType, float>& NewItemChances)
@@ -92,12 +99,12 @@ void APSPickupItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 
 void APSPickupItem::OnPickedUp()
 {
-    // sound, anim, etc
-
     PickupFlipbookComp->SetVisibility(false);
     PickupCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     PSPickupItemWidgetComp->ActivePickupItemWidget(ItemType);
+
+    if (SelectedSound) UGameplayStatics::PlaySound2D(this, SelectedSound);
 
     SetLifeSpan(3.5f);
 
@@ -125,36 +132,47 @@ void APSPickupItem::SelectRandomItemType()
         }
     }
 
+    UPaperFlipbook* SelectedPickupItem = OrangeScaleFlipbook;
     switch (ItemType)
     {
     case EPickupItemType::OrangeScale:
-        PickupFlipbookComp->SetFlipbook(OrangeScaleFlipbook);
+        SelectedPickupItem = OrangeScaleFlipbook;
+        SelectedSound = OrangeScaleSound;
         break;
     case EPickupItemType::BlueScale:
-        PickupFlipbookComp->SetFlipbook(BlueScaleFlipbook);
+        SelectedPickupItem = BlueScaleFlipbook;
+        SelectedSound = BlueScaleSound;
         break;
     case EPickupItemType::PurpleScale:
-        PickupFlipbookComp->SetFlipbook(PurpleScaleFlipbook);
+        SelectedPickupItem = PurpleScaleFlipbook;
+        SelectedSound = PurpleScaleSound;
         break;
     case EPickupItemType::BlackScale:
-        PickupFlipbookComp->SetFlipbook(BlackScaleFlipbook);
+        SelectedPickupItem = BlackScaleFlipbook;
+        SelectedSound = BlackScaleSound;
         break;
     case EPickupItemType::GoldScale:
-        PickupFlipbookComp->SetFlipbook(GoldScaleFlipbook);
+        SelectedPickupItem = GoldScaleFlipbook;
+        SelectedSound = GoldScaleSound;
         break;
     case EPickupItemType::Health:
-        PickupFlipbookComp->SetFlipbook(HealthFlipbook);
+        SelectedPickupItem = HealthFlipbook;
+        SelectedSound = OrangeScaleSound;
         break;
     case EPickupItemType::Speed:
-        PickupFlipbookComp->SetFlipbook(SpeedFlipbook);
+        SelectedPickupItem = SpeedFlipbook;
+        SelectedSound = SpeedSound;
         break;
     case EPickupItemType::Attack:
-        PickupFlipbookComp->SetFlipbook(AttackWipeFlipbook);
+        SelectedPickupItem = AttackFlipbook;
+        SelectedSound = AttackSound;
         break;
     default:
         UE_LOG(LogTemp, Warning, TEXT("Unknown pickup item type."));
         break;
     }
+
+     PickupFlipbookComp->SetFlipbook(SelectedPickupItem);
 }
 
 void APSPickupItem::EnableCollision()
@@ -171,4 +189,23 @@ void APSPickupItem::FlashEffect()
 {
     bool bIsVisible = PickupFlipbookComp->IsVisible();
     PickupFlipbookComp->SetVisibility(!bIsVisible);
+}
+
+void APSPickupItem::MoveTowardsCircle(float DeltaTime)
+{
+    FVector CurrentLocation = GetActorLocation();
+    FVector ToCenter = CircleCenter - CurrentLocation;
+    ToCenter.Z = 0;
+
+    if (ToCenter.SizeSquared() > FMath::Square(CircleRadius))
+    {
+        FVector Direction = ToCenter.GetSafeNormal();
+        FVector NewLocation = CurrentLocation + Direction * MovementSpeedTowardsCircle * DeltaTime;
+        SetActorLocation(NewLocation);
+    }
+    else
+
+    {
+        bIsInCircle = true;
+    }
 }

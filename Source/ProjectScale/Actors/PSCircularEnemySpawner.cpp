@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSCircularEnemySpawner.h"
 #include "ProjectScale/Actors/PSEnemy.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -72,17 +71,42 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
 
     // random angle for spawn location
     float Angle = FMath::RandRange(0.f, 360.f);
-    FVector SpawnLocation = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(Angle)) * (PlatformRadius + SpawnDistanceFromPlatform), FMath::Sin(FMath::DegreesToRadians(Angle)) * PlatformRadius, ZOffset);
+
+    //// platform edge location -- used for debugging
+    //FVector PlatformEdgeLocation = PlatformCenter
+    //    + FVector(FMath::Cos(FMath::DegreesToRadians(Angle)) * PlatformRadius,
+    //        FMath::Sin(FMath::DegreesToRadians(Angle)) * PlatformRadius,
+    //        ZOffset);
+
+    // the spawn location should be outside the platform by 'SpawnDistanceFromPlatform'
+    FVector SpawnLocation = PlatformCenter
+        + FVector(FMath::Cos(FMath::DegreesToRadians(Angle)) * (PlatformRadius + SpawnDistanceFromPlatform),
+            FMath::Sin(FMath::DegreesToRadians(Angle)) * (PlatformRadius + SpawnDistanceFromPlatform),
+            ZOffset);
+
+    //DrawDebugLine(
+    //    GetWorld(),
+    //    PlatformEdgeLocation,
+    //    SpawnLocation,
+    //    FColor::Red,
+    //    false,
+    //    10.0f,
+    //    0,
+    //    2.0f
+    //);
+
 
     APSEnemy* NewEnemy = GetWorld()->SpawnActor<APSEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
     if (NewEnemy)
     {
-        // calculate a random point within the platform for the enemy to move towards
+        // Calculate a random point within the platform for the enemy to move towards
         float RandomAngle = FMath::RandRange(0.f, 360.f);
-        float RandomRadius = FMath::RandRange(0.f, PlatformRadius); // adjust radius within the platform
-        FVector TargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(RandomAngle)) * RandomRadius, FMath::Sin(FMath::DegreesToRadians(RandomAngle)) * RandomRadius, ZOffset);
+        float RandomRadius = FMath::RandRange(0.f, PlatformRadius); // Adjust radius within the platform
+        FVector TargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(RandomAngle)) * RandomRadius,
+            FMath::Sin(FMath::DegreesToRadians(RandomAngle)) * RandomRadius,
+            ZOffset);
 
-        // calculate the direction vector from the enemy to the target point
+        // Calculate the direction vector from the enemy to the target point
         FVector Direction = (TargetPoint - SpawnLocation).GetSafeNormal();
         NewEnemy->InitializeDirection(Direction);
         UE_LOG(CircularEnemySpawner, Display, TEXT("Enemy successfully spawned."));

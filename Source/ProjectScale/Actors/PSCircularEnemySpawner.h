@@ -71,15 +71,12 @@ public:
     UPROPERTY(EditAnywhere, Category = "Spawning")
     float IncrementInterval = 60.0f; // Seconds
 
-
-    // curve to control spawn frequency and number of enemies
+    /* curve to control spawn frequency and number of enemies */
     UPROPERTY(EditAnywhere, Category = "Spawning")
     TObjectPtr<UCurveFloat> SpawnCurve;
 
     UPROPERTY(EditAnywhere, Category = "Spawning")
     float BaseSpawnRate { .1f };
-
-
 
     FTimerHandle SpawnTimer;
 
@@ -89,19 +86,13 @@ public:
 
     float GetSpawnFrequency();
 
-
     UFUNCTION()
     void IncrementNumberOfEnemiesInRow();
 
-
-
 private:
-
     int32 CurrentNumberOfEnemiesInRow;
     FTimerHandle IncrementTimerHandle;
     FTimerHandle FrequencyCheckTimerHandle;
-
     float LastSpawnDelay{ -1.0f };
-
     bool bShouldSpawnEnemies{ true };
 };

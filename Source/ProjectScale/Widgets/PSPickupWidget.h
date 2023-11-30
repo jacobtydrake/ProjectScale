@@ -18,8 +18,10 @@ class PROJECTSCALE_API UPSPickupWidget : public UUserWidget
 
 public:
 
-	void SetText(const FString NewText);
+	/* Overrides */
+	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
+	void SetText(const FString NewText);
 	void PlayPickupAnimation();
 
 protected:

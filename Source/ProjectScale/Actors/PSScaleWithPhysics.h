@@ -47,5 +47,4 @@ protected:
 	TObjectPtr<UPaperFlipbook> BlackScaleFlipbook;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> GoldScaleFlipbook;
-
 };

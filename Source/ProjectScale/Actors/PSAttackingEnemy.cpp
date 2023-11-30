@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSAttackingEnemy.h"
 #include "ProjectScale/Components/PSDamageComponent.h"
 #include "TimerManager.h"

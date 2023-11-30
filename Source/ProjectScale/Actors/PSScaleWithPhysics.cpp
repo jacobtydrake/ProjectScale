@@ -12,7 +12,6 @@ APSScaleWithPhysics::APSScaleWithPhysics()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-
     SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
     RootComponent = SceneComp;
 
@@ -40,17 +39,13 @@ void APSScaleWithPhysics::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-
     if (PickupFlipbookComp)
     {
         FRotator ModifiedRotation = PhysicsSphere->GetRelativeRotation();
         ModifiedRotation.Roll = PSGlobals::SpriteRotation.Roll;
         PhysicsSphere->SetRelativeRotation(ModifiedRotation);
     }
-
 }
-//(Pitch = 0.000000, Yaw = 0.000000, Roll = 10.000000)
-
 
 void APSScaleWithPhysics::SetSelectedFlipBook(EPickupItemType SelectedScale)
 {

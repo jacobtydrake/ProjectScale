@@ -1,3 +1,4 @@
+// Written by Jacob Drake - 2023
 
 #pragma once
 
@@ -18,6 +19,7 @@ class APSHUD;
 class UPSCharacterWidgetComponent;
 class UPSScoreController;
 class UPSVacuumComponent;
+class USoundBase;
 
 enum class EPickupItemType : uint8;
 
@@ -218,4 +220,12 @@ private:
 
 	/* womp womp */
 	bool bIsDead{ false };
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> PunchSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> HurtSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> DeathSound;
 };

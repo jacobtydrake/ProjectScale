@@ -13,6 +13,7 @@ class UCapsuleComponent;
 class UPaperFlipbookComponent;
 class UMaterialInstanceDynamic;
 class APSPickupItem;
+class USoundBase;
 
 enum class EPickupItemType : uint8;
 
@@ -108,4 +109,10 @@ protected:
 	UPROPERTY()
 	FVector DamagedLaunchDirection{ FVector::ZeroVector };
 
+	UPROPERTY()
+	FRotator DeadRotation{ FRotator::ZeroRotator };
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> DeathSound;
 };

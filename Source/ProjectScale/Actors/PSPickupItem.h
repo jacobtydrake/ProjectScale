@@ -11,6 +11,7 @@ class UPaperFlipbookComponent;
 class UPaperFlipbook;
 class UPSPickupItemWidgetComponent;
 class USceneComponent;
+class USoundBase;
 
 UENUM(BlueprintType)
 enum class EPickupItemType : uint8
@@ -65,40 +66,28 @@ public:
 	UFUNCTION()
 	void EnableCollision();
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	EPickupItemType ItemType;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
 	TMap<EPickupItemType, float> ItemChances;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> BlueScaleFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> OrangeScaleFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> PurpleScaleFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> BlackScaleFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> GoldScaleFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> HealthFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UPaperFlipbook> SpeedFlipbook;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	TObjectPtr<UPaperFlipbook> AttackWipeFlipbook;
-
+	TObjectPtr<UPaperFlipbook> AttackFlipbook;
 
 private:
-
 	UPROPERTY(EditAnywhere)
 	float Lifespan{ 25.0f };
 	UPROPERTY(EditAnywhere)
@@ -115,4 +104,33 @@ private:
 	float BobAmplitude{ 12.0f };
 	float InitialZ{ 105.f };
 
+	/* move to platform if off, so player can pick up item */
+	void MoveTowardsCircle(float DeltaTime);
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	FVector CircleCenter;
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float CircleRadius = 1000.0f;  
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float MovementSpeedTowardsCircle = 100.0f;
+	bool bIsInCircle{ false };
+
+	TObjectPtr<USoundBase> SelectedSound;
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> OrangeScaleSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> BlueScaleSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> PurpleScaleSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> BlackScaleSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> GoldScaleSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> HealthSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> SpeedSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> AttackSound;
 };

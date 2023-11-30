@@ -47,7 +47,7 @@ protected:
 	float LastAttackTime{ 0.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	float AttackCooldown{ .40f };
+	float AttackCooldown{ .50f };
 
 	FTimerManager* TimerManager;
 

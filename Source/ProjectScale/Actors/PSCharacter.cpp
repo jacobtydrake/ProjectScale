@@ -1,3 +1,4 @@
+// Written by Jacob Drake - 2023
 
 #include "PSCharacter.h"
 #include "PaperFlipbookComponent.h"
@@ -19,6 +20,8 @@
 #include "ProjectScale/Components/PSVacuumComponent.h"
 #include "ProjectScale/Utils/PSGlobals.h"
 #include "ProjectScale/Actors/PSWooshEffect.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(PSCharacter);
 
@@ -117,6 +120,11 @@ void APSCharacter::TakeDamage_Implementation(const float DamageAmount, const FVe
 
 		FTimerHandle TimerHandle;
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &APSCharacter::RevertSpriteColor, 0.1f, false);
+
+		if (HurtSound)
+		{
+			UGameplayStatics::PlaySound2D(this, HurtSound);
+		}
 
 		if (CachedHUD)
 		{
@@ -355,6 +363,11 @@ void APSCharacter::Die()
 	GetWorldTimerManager().ClearTimer(InputBufferTimerHandle);
 	bIsComboAttackQueued = false;
 	bIsAttacking = false;
+
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySound2D(this, DeathSound);
+	}
 }
 
 void APSCharacter::ApplySpeedBuff()
