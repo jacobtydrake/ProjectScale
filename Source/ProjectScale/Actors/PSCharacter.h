@@ -187,7 +187,7 @@ private:
 
 	/* Controls rate at which player can take damage */
 	UPROPERTY(EditAnywhere)
-	float DamageCooldown{ 1.0f };
+	float DamageCooldown{ 0.80f };
 	float LastDamageTime{ 0.0f };
 
 	/* Speed buff properties */

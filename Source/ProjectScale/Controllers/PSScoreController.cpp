@@ -5,6 +5,8 @@
 #include "ProjectScale/Actors/PSPickupItem.h"
 #include "ProjectScale/Actors/PSScaleWithPhysics.h"
 #include "ProjectScale/PSHUD.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
 UPSScoreController::UPSScoreController()
 {

@@ -8,6 +8,7 @@
 
 class APSScaleWithPhysics;
 class APSHUD;
+class USound;
 
 enum class EPickupItemType : uint8;
 
