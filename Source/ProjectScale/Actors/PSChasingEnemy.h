@@ -9,6 +9,7 @@
 class APSCharacter;
 class UPSDamageComponent;
 class TimerManager;
+class USoundBase;
 
 /**
  * 
@@ -104,5 +105,9 @@ private:
 	bool bIsLaunching{ false };
 
 	float CurrentLaunchDuration{ 0.0f };
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> AttackSound;
 
 };

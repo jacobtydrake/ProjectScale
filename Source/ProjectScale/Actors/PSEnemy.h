@@ -114,5 +114,7 @@ protected:
 
 	/* Sound */
 	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> HitSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> DeathSound;
 };

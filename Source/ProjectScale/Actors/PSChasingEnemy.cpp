@@ -7,6 +7,8 @@
 #include "ProjectScale/Components/PSDamageComponent.h"
 #include "TimerManager.h"
 #include "PSPickupItem.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APSChasingEnemy::APSChasingEnemy()
 {
@@ -103,6 +105,12 @@ void APSChasingEnemy::StartLaunch()
     CurrentLaunchDuration = TotalLaunchDuration;
     GetWorldTimerManager().SetTimer(DamageCollisionTimerHandle, this, &APSChasingEnemy::ToggleDamageCollision,  .2, false);
     GetWorldTimerManager().SetTimer(LaunchTimerHandle, this, &APSChasingEnemy::HandleLaunch, 0.016f, true);
+
+    // bite sound 
+    if (AttackSound)
+    {
+        UGameplayStatics::PlaySound2D(this, AttackSound);
+    }
 }
 
 void APSChasingEnemy::HandleLaunch()

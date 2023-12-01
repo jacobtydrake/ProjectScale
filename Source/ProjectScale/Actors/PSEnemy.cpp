@@ -96,6 +96,11 @@ void APSEnemy::TakeDamage_Implementation(const float DamageAmount, const FVector
 
 	CurrentHealth -= 1.0f;
 
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySound2D(this, HitSound);
+	}
+
 	if (CurrentHealth <= 0.f)
 	{
 		DamagedLaunchDirection = LaunchDirection;

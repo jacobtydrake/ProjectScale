@@ -156,6 +156,11 @@ void APSCharacter::Move(const FInputActionValue& Value)
 	bIsHoldingMove = true;
 	MovementVector = Value.Get<FVector2D>();
 
+	if (!GetWorldTimerManager().IsTimerActive(FootstepSoundTimerHandle))
+	{
+		PlayRandomFootstepSound();
+	}
+
 	if (MovementVector.X > 0)
 	{
 		LastMoveDirection = ELastMoveDirection::Right;
@@ -342,6 +347,12 @@ void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 		CachedInputVector = LastInputVector;
 		LaunchCharacter(GetMovementComponent()->GetLastInputVector() * ThrustPower, true, true);
 	}
+
+	// punch woosh sound
+	if (PunchSound)
+	{
+		UGameplayStatics::PlaySound2D(this, PunchSound);
+	}
 }
 
 void APSCharacter::Die()
@@ -420,6 +431,22 @@ void APSCharacter::RevertAttackBuff()
 	}
 	bIsAttackBuffActive = false;
 	AttackCooldown = OriginalAttackCooldown;
+}
+
+void APSCharacter::PlayRandomFootstepSound()
+{
+	int32 NewIndex;
+	do
+	{
+		NewIndex = FMath::RandRange(0, FootstepSounds.Num() - 1);
+	} while (NewIndex == LastFootstepSoundIndex && FootstepSounds.Num() > 1);
+
+	LastFootstepSoundIndex = NewIndex;
+
+	UGameplayStatics::PlaySoundAtLocation(this, FootstepSounds[NewIndex], GetActorLocation());
+
+	float FootstepDelay = 0.3f;
+	GetWorldTimerManager().SetTimer(FootstepSoundTimerHandle, FootstepDelay, false);
 }
 
 void APSCharacter::OnItemPickup(EPickupItemType ItemType)

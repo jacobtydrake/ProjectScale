@@ -105,6 +105,9 @@ protected:
 	UFUNCTION()
 	void RevertAttackBuff();
 
+	UFUNCTION()
+	void PlayRandomFootstepSound();
+
 	/* Components */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComp;
@@ -228,4 +231,9 @@ private:
 	TObjectPtr<USoundBase> HurtSound;
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> DeathSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TArray<TObjectPtr<USoundBase>> FootstepSounds;
+
+	int32 LastFootstepSoundIndex = -1;
+	FTimerHandle FootstepSoundTimerHandle;
 };
