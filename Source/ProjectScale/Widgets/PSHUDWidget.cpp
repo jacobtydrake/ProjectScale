@@ -4,6 +4,7 @@
 #include "PSHUDWidget.h"
 #include "Components/Image.h"
 #include "ProjectScale/Widgets/PSPowerupWidget.h"
+#include "Components/TextBlock.h"
 
 void UPSHUDWidget::UpdateHealth(int32 NewHealth)
 {
@@ -77,6 +78,18 @@ void UPSHUDWidget::UpdateHealthLossSprite()
     {
         CurrentAnimationSpriteIndex++;
         GetWorld()->GetTimerManager().SetTimer(HealthLossTimerHandle, this, &UPSHUDWidget::UpdateHealthLossSprite, AnimationDelay, false);
+    }
+}
+
+void UPSHUDWidget::UpdateScoreWidget(const int32 NewScore)
+{
+    if (ScoreText)
+    {
+        ScoreText->SetText(FText::AsNumber(NewScore));
+        if (ScoreIncreaseAnim)
+        {
+            PlayAnimation(ScoreIncreaseAnim);
+        }
     }
 }
 

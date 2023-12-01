@@ -150,3 +150,11 @@ void APSHUD::SetHUDWidgetVisibility(const bool bIsVisible)
         HUDWidgetInstance->SetVisibility(NewVisibiity);
     }
 }
+
+void APSHUD::UpdateScoreWidget(const int32 NewScore)
+{
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->UpdateScoreWidget(NewScore);
+    }
+}

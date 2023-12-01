@@ -51,6 +51,9 @@ public:
 	UFUNCTION()
 	void SetHUDWidgetVisibility(const bool bIsVisible);
 
+	UFUNCTION()
+	void UpdateScoreWidget(const int32 NewScore);
+
 private:
 	TSubclassOf<UPSHUDWidget> HUDWidgetClass;
 	TSubclassOf<UPSPauseScreen> PauseWidgetClass;

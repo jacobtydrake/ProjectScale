@@ -40,6 +40,11 @@ void UPSScoreController::AddItemToScore(EPickupItemType ItemType)
     int32 ScoreToAdd = CalculateScoreForItem(ItemType);
     TotalScore += ScoreToAdd;
     ItemPickupCounts.FindOrAdd(ItemType)++;
+
+    if (CachedHUD)
+    {
+        CachedHUD->UpdateScoreWidget(TotalScore);
+    }
 }
 
 int32 UPSScoreController::GetTotalScore() const

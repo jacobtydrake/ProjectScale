@@ -47,6 +47,10 @@ void APSPlayerController::BeginPlay()
 	{
 		CachedCameraActor = Cast<ACameraActor>(FoundCameras[0]);
 	}
+	if (CachedHUD && PSScoreController)
+	{
+		PSScoreController->InitializeCachedHUD(CachedHUD);
+	}
 }
 
 void APSPlayerController::OnPauseButtonPressed()
@@ -117,7 +121,6 @@ void APSPlayerController::OnCharacterDeath()
 
 	if (PSScoreController && CachedHUD && PSScoreController)
 	{
-		PSScoreController->InitializeCachedHUD(CachedHUD);
 		int32 TotalScore = PSScoreController->GetTotalScore();
 		TMap<EPickupItemType, int32> ItemCounts = PSScoreController->GetItemPickupCounts();
 		CachedHUD->SetHUDWidgetVisibility(false);

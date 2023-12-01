@@ -41,13 +41,13 @@ void UPSPickupItemWidgetComponent::ActivePickupItemWidget(const EPickupItemType 
         WidgetInst->SetText("+20");
         break;
     case EPickupItemType::Speed:
-        WidgetInst->SetText("+Speed");
+        WidgetInst->SetText("+Move Speed");
         break;
     case EPickupItemType::Health:
         WidgetInst->SetText("+Health");
         break;
     case EPickupItemType::Attack:
-        WidgetInst->SetText("+Attack");
+        WidgetInst->SetText("+Attack Speed");
         break;
     }
 

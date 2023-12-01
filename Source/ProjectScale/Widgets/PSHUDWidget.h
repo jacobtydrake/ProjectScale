@@ -8,7 +8,7 @@
 
 class UImage;
 class UPSPowerupWidget;
-
+class UTextBlock;
 
 /**
  * 
@@ -25,6 +25,8 @@ public:
 	void UpdateAttackWidget(const float Time);
 	UFUNCTION()
 	void UpdateSpeedWidget(const float Time);
+	UFUNCTION()
+	void UpdateScoreWidget(const int32 NewScore);
 
 protected:
 	void PlayHealthGainAnimation(int32 HealthIndex);
@@ -33,9 +35,8 @@ protected:
 	void UpdateHealthGainSprite();
 	void UpdateHealthLossSprite();
 
+
 	TObjectPtr<UImage> GetImageForHealthIndex(int32 HealthIndex);
-
-
 
 	/**/
 	UPROPERTY(EditAnywhere, Category = "Health Animation")
@@ -55,6 +56,12 @@ protected:
 	/**/
 	FTimerHandle HealthGainTimerHandle;
 	FTimerHandle HealthLossTimerHandle;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ScoreText;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> ScoreIncreaseAnim;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UPSPowerupWidget> AttackPowerup;
