@@ -31,6 +31,9 @@ public:
 	UFUNCTION()
 	void OnCharacterDeath();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void StopMusic();
+
 	UFUNCTION(BlueprintCallable)
 	void StartScoreScreenProcess();
 

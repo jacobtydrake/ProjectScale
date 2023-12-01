@@ -135,6 +135,8 @@ void APSPlayerController::OnCharacterDeath()
 		CachedHUD->SetHUDWidgetVisibility(false);
 		CachedHUD->DisplayScoreScreen(ItemCounts, TotalScore);
 	}
+
+	StopMusic();
 }
 
 void APSPlayerController::StartScoreScreenProcess()
