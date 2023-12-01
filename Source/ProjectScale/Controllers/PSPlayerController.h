@@ -11,6 +11,7 @@ class APSHUD;
 class UPSScoreController;
 class ACameraActor;
 class APSCharacter;
+class USoundBase;
 /**
  * 
  */
@@ -62,6 +63,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TSubclassOf<ACameraActor> SelectedCameraClass;
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> ScaleSpawnSoundforController;
 
 private:
 	TObjectPtr<APSCharacter> CachedCharacter;

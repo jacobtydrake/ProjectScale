@@ -3,6 +3,8 @@
 
 #include "PSScaryFish.h"
 #include "ProjectScale/Actors/PSPickupItem.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APSScaryFish::APSScaryFish()
 {
@@ -23,4 +25,30 @@ void APSScaryFish::UpdateDropChances()
 	CustomDropChances.Add(EPickupItemType::BlackScale, 90.0f);
 	CustomDropChances.Add(EPickupItemType::Health, 5.0f);
 	CustomDropChances.Add(EPickupItemType::Attack, 5.0f);
+}
+
+void APSScaryFish::StartLaunch()
+{
+	Super::StartLaunch();
+
+	LaunchSoundRepetitions = 5;
+
+	UE_LOG(LogTemp, Warning, TEXT("StartLaunch called. Resetting LaunchSoundRepetitions to %d"), LaunchSoundRepetitions);
+
+	// Clear any existing timer and play the launch sound
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandleLaunchSound);
+	PlayLaunchSound();
+}
+
+void APSScaryFish::PlayLaunchSound()
+{
+	if (LaunchSound && LaunchSoundRepetitions > 0)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, LaunchSound, GetActorLocation());
+		LaunchSoundRepetitions--;
+		if (LaunchSoundRepetitions > 0)
+		{
+			GetWorld()->GetTimerManager().SetTimer(TimerHandleLaunchSound, this, &APSScaryFish::PlayLaunchSound, LaunchSoundDelay, false);
+		}
+	}
 }

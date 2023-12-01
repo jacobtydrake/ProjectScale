@@ -48,7 +48,7 @@ protected:
 	void EndAttack();
 
 	UFUNCTION()
-	void StartLaunch();
+	virtual void StartLaunch();
 
 	UFUNCTION()
 	void HandleLaunch();

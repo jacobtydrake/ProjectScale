@@ -6,6 +6,8 @@
 #include "ProjectScale/Actors/PSChasingEnemy.h"
 #include "PSScaryFish.generated.h"
 
+class USoundBase;
+
 /**
  * 
  */
@@ -17,6 +19,22 @@ class PROJECTSCALE_API APSScaryFish : public APSChasingEnemy
 	APSScaryFish();
 
 protected:
+	/* Enemy Override */
 	virtual void UpdateDropChances() override;
-	
+
+	/* Chasing Enemy Override */
+	virtual void StartLaunch() override;
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> LaunchSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	int32 LaunchSoundRepetitions{ 3 };
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	float LaunchSoundDelay{ 0.3f };
+
+	FTimerHandle TimerHandleLaunchSound;
+
+	void PlayLaunchSound();
 };

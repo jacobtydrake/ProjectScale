@@ -12,6 +12,7 @@
 #include "Camera/CameraActor.h"
 #include "ProjectScale/Actors/PSCharacter.h"
 #include "Components/ActorComponent.h"
+#include "Sound/SoundBase.h"
 
 void APSPlayerController::BeginPlay()
 {
@@ -59,6 +60,7 @@ void APSPlayerController::BeginPlay()
 	if (CachedHUD && PSScoreController)
 	{
 		PSScoreController->InitializeCachedHUD(CachedHUD);
+		PSScoreController->InitializeSound(ScaleSpawnSoundforController);
 	}
 }
 

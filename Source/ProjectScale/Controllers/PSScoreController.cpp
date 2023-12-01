@@ -87,6 +87,10 @@ void UPSScoreController::SpawnNextScale()
         if (NewScale)
         {
             NewScale->SetSelectedFlipBook(CurrentItemType);
+            if (ScaleSpawnSound)
+            {
+                UGameplayStatics::PlaySound2D(this, ScaleSpawnSound);
+            }
         }
 
         ScalesSpawned++;
@@ -158,6 +162,11 @@ void UPSScoreController::StartSpawningCurrentType()
 
     // Set timer for spawning scales
     GetWorld()->GetTimerManager().SetTimer(ScaleSpawnTimerHandle, this, &UPSScoreController::SpawnNextScale, CurrentSpawnRate, true);
+}
+
+void UPSScoreController::InitializeSound(USoundBase* Sound)
+{
+    ScaleSpawnSound = Sound;
 }
 
 int32 UPSScoreController::CalculateScoreForItem(EPickupItemType ItemType) const

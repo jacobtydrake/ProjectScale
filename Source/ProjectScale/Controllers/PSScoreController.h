@@ -38,6 +38,9 @@ public:
 	UFUNCTION()
 	void InitializeCachedHUD(APSHUD* HUDtoCache);
 
+	UFUNCTION()
+	void InitializeSound(USoundBase* Sound);
+
 private:
 
 	void InitializeScaleTypesToSpawn();
@@ -80,4 +83,8 @@ private:
 
 	/**/
 	TObjectPtr<APSHUD> CachedHUD;
+
+	/* Sound */
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> ScaleSpawnSound;
 };
