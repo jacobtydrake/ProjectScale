@@ -11,6 +11,7 @@
 #include "ProjectScale/Actors/PSEnemy.h"
 #include "Camera/CameraActor.h"
 #include "ProjectScale/Actors/PSCharacter.h"
+#include "Components/ActorComponent.h"
 
 void APSPlayerController::BeginPlay()
 {
@@ -32,15 +33,23 @@ void APSPlayerController::BeginPlay()
 
 	PSScoreController = NewObject<UPSScoreController>(this);
 
-	// Cache PSCharacter
+	// cache PSCharacter
 	TArray<AActor*> FoundCharacters;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSCharacter::StaticClass(), FoundCharacters);
 	if (FoundCharacters.Num() > 0)
 	{
 		CachedCharacter = Cast<APSCharacter>(FoundCharacters[0]);
+		if (CachedCharacter)
+		{
+			USceneComponent* ListenerComponent = Cast<USceneComponent>(CachedCharacter->GetRootComponent());
+			if (ListenerComponent)
+			{
+				SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
+			}
+		}
 	}
 
-	// Cache Camera
+	// cache Camera
 	TArray<AActor*> FoundCameras;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), SelectedCameraClass, FoundCameras);
 	if (FoundCameras.Num() > 0)
