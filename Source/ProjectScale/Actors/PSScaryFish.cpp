@@ -31,9 +31,7 @@ void APSScaryFish::StartLaunch()
 {
 	Super::StartLaunch();
 
-	LaunchSoundRepetitions = 5;
-
-	UE_LOG(LogTemp, Warning, TEXT("StartLaunch called. Resetting LaunchSoundRepetitions to %d"), LaunchSoundRepetitions);
+	LaunchSoundRepetitions = 4;
 
 	// Clear any existing timer and play the launch sound
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandleLaunchSound);

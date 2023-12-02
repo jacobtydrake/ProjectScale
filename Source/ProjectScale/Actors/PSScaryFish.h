@@ -30,7 +30,7 @@ protected:
 	TObjectPtr<USoundBase> LaunchSound;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
-	int32 LaunchSoundRepetitions{ 3 };
+	int32 LaunchSoundRepetitions{ 4 };
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	float LaunchSoundDelay{ 0.3f };
 
