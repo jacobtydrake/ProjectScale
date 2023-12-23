@@ -3,23 +3,19 @@
 #include "PSCharacter.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/InputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h "
 #include "ProjectScale/Components/PSDamageComponent.h"
-#include "Components/BoxComponent.h"
 #include "ProjectScale/Controllers/PSPlayerController.h"
 #include "PSPickupItem.h"
 #include "ProjectScale/PSHUD.h"
-#include "ProjectScale/Controllers/PSPlayerController.h"
 #include "ProjectScale/Components/PSCharacterWidgetComponent.h"
 #include "ProjectScale/Controllers/PSScoreController.h"
 #include "ProjectScale/Components/PSVacuumComponent.h"
 #include "ProjectScale/Utils/PSGlobals.h"
-#include "ProjectScale/Actors/PSWooshEffect.h"
 #include "Sound/SoundBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -77,7 +73,7 @@ void APSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (TObjectPtr<APSPlayerController> PSPlayerController = Cast<APSPlayerController>(GetWorld()->GetFirstPlayerController()))
+	if (const TObjectPtr<APSPlayerController> PSPlayerController = Cast<APSPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
 		CachedHUD = PSPlayerController->GetPSHUD();
 		CachedScoreController = PSPlayerController->GetPSScoreController();
@@ -92,7 +88,7 @@ void APSCharacter::Tick(float DeltaTime)
 void APSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	if (TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	if (const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APSCharacter::Move);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &APSCharacter::StopMove);
@@ -152,9 +148,16 @@ void APSCharacter::Move(const FInputActionValue& Value)
 {
 	if (!bIsMovementAllowed) return;
 
+	MovementVector = Value.Get<FVector2D>();
+
+	constexpr float DeadZone = 0.1f;
+	if (MovementVector.SizeSquared() <= FMath::Square(DeadZone))
+	{
+		bIsHoldingMove = false;
+		return;
+	}
 
 	bIsHoldingMove = true;
-	MovementVector = Value.Get<FVector2D>();
 
 	if (!GetWorldTimerManager().IsTimerActive(FootstepSoundTimerHandle))
 	{
@@ -229,7 +232,7 @@ void APSCharacter::Attack()
 		ToggleDamageComp(true);
 
 		const float BoostPower = bIsAttackBuffActive ? BoostedAttackThrustPower : AttackThrustPower;
-		ApplyAttackBoost(AttackThrustPower);
+		ApplyAttackBoost(BoostPower);
 
 		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &APSCharacter::OnFirstAttackAnimationEnd, FirstAttackAnimationLength, false);
 		GetWorldTimerManager().SetTimer(ComboWindowTimerHandle, this, &APSCharacter::StopAttackAnim, ComboWindowDurationOffset, false);
@@ -283,7 +286,6 @@ void APSCharacter::ToggleDamageComp(const bool bShouldActiveCollision)
 void APSCharacter::OnFirstAttackAnimationEnd()
 {
 	ToggleDamageComp(false);
-	//WooshEffectComp->SetVisibility(false);
 
 	if (bIsComboAttackQueued)
 	{
@@ -310,7 +312,6 @@ void APSCharacter::StopAttackAnim()
 	LastAttackEndTime = GetWorld()->GetTimeSeconds();
 
 	ToggleDamageComp(false);
-	//WooshEffectComp->SetVisibility(false);
 	bIsMovementAllowed = true;
 }
 
@@ -347,8 +348,7 @@ void APSCharacter::ApplyAttackBoost(const float ThrustPower)
 		CachedInputVector = LastInputVector;
 		LaunchCharacter(GetMovementComponent()->GetLastInputVector() * ThrustPower, true, true);
 	}
-
-	// punch woosh sound
+	
 	if (PunchSound)
 	{
 		UGameplayStatics::PlaySound2D(this, PunchSound);
@@ -365,7 +365,7 @@ void APSCharacter::Die()
 	bIsMovementAllowed = false;
 
 	// Flip the sprite so character is facing score screen :)
-	FVector FlippedSpriteScale = GetSprite()->GetComponentScale();
+	const FVector FlippedSpriteScale = GetSprite()->GetComponentScale();
 	GetSprite()->SetWorldScale3D(FVector(-FlippedSpriteScale.X, FlippedSpriteScale.Y, FlippedSpriteScale.Z));
 
 	GetWorldTimerManager().ClearTimer(SpeedBuffTimerHandle);
@@ -415,6 +415,7 @@ void APSCharacter::ApplyAttackBuff()
 		bIsAttackBuffActive = true;
 		AttackCooldown = ReducedAttackCooldown;
 	}
+	GetWorldTimerManager().ClearTimer(AttackBuffTimerHandle);
 	GetWorldTimerManager().SetTimer(AttackBuffTimerHandle, this, &APSCharacter::RevertAttackBuff, AttackBuffDuration);
 
 	if (CachedHUD)
@@ -449,7 +450,7 @@ void APSCharacter::PlayRandomFootstepSound()
 	GetWorldTimerManager().SetTimer(FootstepSoundTimerHandle, FootstepDelay, false);
 }
 
-void APSCharacter::OnItemPickup(EPickupItemType ItemType)
+void APSCharacter::OnItemPickup(const EPickupItemType ItemType)
 {
 	switch (ItemType)
 	{
@@ -501,7 +502,7 @@ void APSCharacter::OnItemPickup(EPickupItemType ItemType)
 	}
 }
 
-void APSCharacter::RevertSpriteColor()
+void APSCharacter::RevertSpriteColor() const
 {
 	GetSprite()->SetSpriteColor(FLinearColor::White);
 }

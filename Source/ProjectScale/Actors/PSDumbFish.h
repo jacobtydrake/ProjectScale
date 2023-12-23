@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "ProjectScale/Actors/PSEnemy.h"
 #include "PSDumbFish.generated.h"
 

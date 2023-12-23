@@ -1,8 +1,7 @@
-
+// Written by Jacob Drake - 2023
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProjectScale/Interfaces/PSCombatInterface.h"
 #include "PSEnemy.generated.h"
@@ -71,10 +70,10 @@ protected:
 	virtual void UpdateDropChances();
 
 	UFUNCTION()
-	void SpawnPickupItem();
+	void SpawnPickupItem() const;
 
 	/**/
-	void RevertSpriteColor();
+	void RevertSpriteColor() const;
 
 	/**/
 	UPROPERTY()

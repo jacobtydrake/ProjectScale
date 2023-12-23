@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "PSEnemy.h"
 #include "PSChasingEnemy.generated.h"
 
@@ -54,7 +53,7 @@ protected:
 	void HandleLaunch();
 
 	UFUNCTION()
-	void ToggleDamageCollision();
+	void ToggleDamageCollision() const;
 
 	/* TODO: cleanup header */
 	UPROPERTY(EditAnywhere, Category = "Chase Behavior")

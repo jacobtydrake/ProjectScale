@@ -1,8 +1,8 @@
 // Written by Jacob Drake - 2023
+// Written by Jacob Drake - 2023
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "ProjectScale/Actors/PSEnemy.h"
 #include "PSAttackingEnemy.generated.h"
 
@@ -35,7 +35,7 @@ protected:
 	void PerformAttack();
 
 	UFUNCTION()
-	void ActivateDamageCollision();
+	void ActivateDamageCollision() const;
 
 	UFUNCTION()
 	void DeactivateDamageCollision();

@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSPickupItemWidgetComponent.h"
 #include "ProjectScale/Widgets/PSPickupWidget.h"
 #include "ProjectScale/Actors/PsPickupItem.h"
@@ -21,7 +20,7 @@ UPSPickupItemWidgetComponent::UPSPickupItemWidgetComponent()
     SetDrawAtDesiredSize(true);
 }
 
-void UPSPickupItemWidgetComponent::ActivePickupItemWidget(const EPickupItemType ItemType)
+void UPSPickupItemWidgetComponent::ActivePickupItemWidget(const EPickupItemType ItemType) const
 {
     switch (ItemType)
     {

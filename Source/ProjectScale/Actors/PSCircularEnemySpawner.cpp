@@ -2,14 +2,13 @@
 
 #include "PSCircularEnemySpawner.h"
 #include "ProjectScale/Actors/PSEnemy.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Curves/CurveFloat.h"
 
 DEFINE_LOG_CATEGORY(CircularEnemySpawner);
 
-APSCircularEnemySpawner::APSCircularEnemySpawner()
+APSCircularEnemySpawner::APSCircularEnemySpawner(): CurrentTime(0), CurrentNumberOfEnemiesInRow(1)
 {
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 }
 
 void APSCircularEnemySpawner::BeginPlay()
@@ -40,7 +39,6 @@ void APSCircularEnemySpawner::BeginPlay()
 void APSCircularEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
     CurrentTime += DeltaTime;
 }
 
@@ -51,7 +49,7 @@ void APSCircularEnemySpawner::StopSpawningEnemies()
     GetWorldTimerManager().ClearTimer(IncrementTimerHandle);
 }
 
-void APSCircularEnemySpawner::SpawnEnemies(const int32 NumberOfEnemies)
+void APSCircularEnemySpawner::SpawnEnemies(const int32 NumberOfEnemies) const
 {
     if (!EnemyClass || NumberOfEnemies <= 0) return;
 
@@ -61,7 +59,7 @@ void APSCircularEnemySpawner::SpawnEnemies(const int32 NumberOfEnemies)
     }
 }
 
-void APSCircularEnemySpawner::SpawnSingleEnemy()
+void APSCircularEnemySpawner::SpawnSingleEnemy() const
 {
     if (!EnemyClass)
     {
@@ -70,7 +68,7 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
     }
 
     // random angle for spawn location
-    float Angle = FMath::RandRange(0.f, 360.f);
+    const float Angle = FMath::RandRange(0.f, 360.f);
 
     //// platform edge location -- used for debugging
     //FVector PlatformEdgeLocation = PlatformCenter
@@ -79,7 +77,7 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
     //        ZOffset);
 
     // the spawn location should be outside the platform by 'SpawnDistanceFromPlatform'
-    FVector SpawnLocation = PlatformCenter
+    const FVector SpawnLocation = PlatformCenter
         + FVector(FMath::Cos(FMath::DegreesToRadians(Angle)) * (PlatformRadius + SpawnDistanceFromPlatform),
             FMath::Sin(FMath::DegreesToRadians(Angle)) * (PlatformRadius + SpawnDistanceFromPlatform),
             ZOffset);
@@ -94,20 +92,18 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
     //    0,
     //    2.0f
     //);
-
-
-    APSEnemy* NewEnemy = GetWorld()->SpawnActor<APSEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
-    if (NewEnemy)
+    
+    if (APSEnemy* NewEnemy = GetWorld()->SpawnActor<APSEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator))
     {
-        // Calculate a random point within the platform for the enemy to move towards
-        float RandomAngle = FMath::RandRange(0.f, 360.f);
-        float RandomRadius = FMath::RandRange(0.f, PlatformRadius); // Adjust radius within the platform
-        FVector TargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(RandomAngle)) * RandomRadius,
+        // calculate a random point within the platform for the enemy to move towards
+        const float RandomAngle = FMath::RandRange(0.f, 360.f);
+        const float RandomRadius = FMath::RandRange(0.f, PlatformRadius); // adjust radius within the platform
+        const FVector TargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(RandomAngle)) * RandomRadius,
             FMath::Sin(FMath::DegreesToRadians(RandomAngle)) * RandomRadius,
             ZOffset);
 
         // Calculate the direction vector from the enemy to the target point
-        FVector Direction = (TargetPoint - SpawnLocation).GetSafeNormal();
+        const FVector Direction = (TargetPoint - SpawnLocation).GetSafeNormal();
         NewEnemy->InitializeDirection(Direction);
         UE_LOG(CircularEnemySpawner, Display, TEXT("Enemy successfully spawned."));
     }
@@ -119,7 +115,7 @@ void APSCircularEnemySpawner::SpawnSingleEnemy()
 
 void APSCircularEnemySpawner::InitializeSpawnTimer()
 {
-    float InitialSpawnDelay = GetSpawnFrequency();
+    const float InitialSpawnDelay = GetSpawnFrequency();
     GetWorldTimerManager().SetTimer(SpawnTimer, this, &APSCircularEnemySpawner::HandleEnemySpawn, InitialSpawnDelay, false);
 }
 
@@ -137,7 +133,7 @@ void APSCircularEnemySpawner::HandleEnemySpawn()
     }
 
     // update timer for next spawn based on the curve
-    float NextSpawnDelay = GetSpawnFrequency();
+    const float NextSpawnDelay = GetSpawnFrequency();
     UE_LOG(CircularEnemySpawner, Log, TEXT("Spawning enemies. Next spawn in %f seconds."), NextSpawnDelay);
 
     GetWorldTimerManager().SetTimer(SpawnTimer, this, &APSCircularEnemySpawner::HandleEnemySpawn, NextSpawnDelay, false);
@@ -145,15 +141,15 @@ void APSCircularEnemySpawner::HandleEnemySpawn()
     CurrentTime += NextSpawnDelay;
 }
 
-float APSCircularEnemySpawner::GetSpawnFrequency()
+float APSCircularEnemySpawner::GetSpawnFrequency() const
 {
     if (SpawnCurve)
     {
-        float CurveValue = SpawnCurve->GetFloatValue(CurrentTime);
+        const float CurveValue = SpawnCurve->GetFloatValue(CurrentTime);
 
-        float Frequency = 1.0f / FMath::Max(BaseSpawnRate * CurveValue, 0.01f);
+        const float Frequency = 1.0f / FMath::Max(BaseSpawnRate * CurveValue, 0.01f);
 
-        FString EnemyClassName = EnemyClass ? EnemyClass->GetName() : TEXT("None");
+        const FString EnemyClassName = EnemyClass ? EnemyClass->GetName() : TEXT("None");
         UE_LOG(CircularEnemySpawner, Log, TEXT("Calculating Spawn Frequency for Enemy Class: %s. Current Time: %f, Curve Value: %f, Calculated Frequency: %f"), *EnemyClassName, CurrentTime, CurveValue, Frequency);
 
         return Frequency;
@@ -177,29 +173,27 @@ void APSCircularEnemySpawner::IncrementNumberOfEnemiesInRow()
     }
 }
 
-void APSCircularEnemySpawner::SpawnEnemyRow(const int32 NumberOfEnemies, const float Spacing)
+void APSCircularEnemySpawner::SpawnEnemyRow(const int32 NumberOfEnemies, const float Spacing) const
 {
     if (!EnemyClass || NumberOfEnemies <= 0) return;
 
     // math hard, thanks gpt
 
     // random angle for row start position
-    float StartAngle = FMath::RandRange(0.f, 360.f);
-    FVector StartPosition = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(StartAngle)) * (PlatformRadius + SpawnDistanceFromPlatform), FMath::Sin(FMath::DegreesToRadians(StartAngle)) * PlatformRadius, ZOffset);
+    const float StartAngle = FMath::RandRange(0.f, 360.f);
+    const FVector StartPosition = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(StartAngle)) * (PlatformRadius + SpawnDistanceFromPlatform), FMath::Sin(FMath::DegreesToRadians(StartAngle)) * PlatformRadius, ZOffset);
 
     // tangent direction on XY plane
-    FVector TangentDirection = FVector(-FMath::Sin(FMath::DegreesToRadians(StartAngle)), FMath::Cos(FMath::DegreesToRadians(StartAngle)), 0.0f);
+    const FVector TangentDirection = FVector(-FMath::Sin(FMath::DegreesToRadians(StartAngle)), FMath::Cos(FMath::DegreesToRadians(StartAngle)), 0.0f);
 
     // determine a line of target points inside the circle parallel to the row
-    FVector BaseTargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(StartAngle + 90.f)) * (PlatformRadius * 0.5f), FMath::Sin(FMath::DegreesToRadians(StartAngle + 90.f)) * (PlatformRadius * 0.5f), ZOffset);
+    const FVector BaseTargetPoint = PlatformCenter + FVector(FMath::Cos(FMath::DegreesToRadians(StartAngle + 90.f)) * (PlatformRadius * 0.5f), FMath::Sin(FMath::DegreesToRadians(StartAngle + 90.f)) * (PlatformRadius * 0.5f), ZOffset);
 
     for (int32 i = 0; i < NumberOfEnemies; ++i)
     {
         FVector SpawnLocation = StartPosition + TangentDirection * (i * Spacing);
         FVector TargetPoint = BaseTargetPoint + TangentDirection * (i * Spacing);
-        APSEnemy* NewEnemy = GetWorld()->SpawnActor<APSEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
-
-        if (NewEnemy)
+        if (APSEnemy* NewEnemy = GetWorld()->SpawnActor<APSEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator))
         {
             FVector Direction = (TargetPoint - SpawnLocation).GetSafeNormal();
             NewEnemy->InitializeDirection(Direction);

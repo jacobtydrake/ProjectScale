@@ -32,4 +32,6 @@ void UPSGenericButton::OnButtonClicked()
     {
         UGameplayStatics::PlaySound2D(this, OnClickSound);
     }
+
+    OnPSButtonClicked.Broadcast();
 }

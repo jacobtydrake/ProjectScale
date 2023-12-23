@@ -1,8 +1,8 @@
 
+// Written by Jacob Drake - 2023
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "PSCombatInterface.generated.h"
 

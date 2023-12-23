@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "PSPlayerController.generated.h"
 
@@ -39,7 +38,7 @@ public:
 	void StartScoreScreenProcess();
 
 	UFUNCTION()
-	void ReverseEnemyDirections();
+	void ReverseEnemyDirections() const;
 
 	/* Getters */
 	UFUNCTION()

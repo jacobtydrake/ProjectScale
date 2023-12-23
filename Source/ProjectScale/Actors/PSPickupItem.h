@@ -64,7 +64,7 @@ public:
 	void SelectRandomItemType();
 
 	UFUNCTION()
-	void EnableCollision();
+	void EnableCollision() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	EPickupItemType ItemType;
@@ -96,7 +96,7 @@ private:
 	FTimerHandle FlashTimerHandle;
 
 	void StartFlashing();
-	void FlashEffect();
+	void FlashEffect() const;
 
 	/* item bob properties */
 	float RunningTime{ 0.0f };

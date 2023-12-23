@@ -24,7 +24,7 @@ void APSGamemode::StartPlay()
     Super::StartPlay();
 
     APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-    FInputModeGameOnly InputModeData;
+    const FInputModeGameOnly InputModeData;
 
     PC->SetInputMode(InputModeData);
     PC->bShowMouseCursor = false;

@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSScoreController.h"
 #include "ProjectScale/Actors/PSPickupItem.h"
 #include "ProjectScale/Actors/PSScaleWithPhysics.h"
@@ -37,7 +36,7 @@ void UPSScoreController::InitializeScaleTypesToSpawn()
 
 void UPSScoreController::AddItemToScore(EPickupItemType ItemType)
 {
-    int32 ScoreToAdd = CalculateScoreForItem(ItemType);
+    const int32 ScoreToAdd = CalculateScoreForItem(ItemType);
     TotalScore += ScoreToAdd;
     ItemPickupCounts.FindOrAdd(ItemType)++;
 
@@ -75,16 +74,15 @@ void UPSScoreController::SpawnNextScale()
 {
     if (ScaleWithPhysicsClass)
     {
-        FVector RandomOffset(
+        const FVector RandomOffset(
             FMath::RandRange(-SpawnOffsetRange.X, SpawnOffsetRange.X),
             FMath::RandRange(-SpawnOffsetRange.Y, SpawnOffsetRange.Y),
             0.0f
         );
 
-        FVector RandomSpawnLocation = SpawnLocation + RandomOffset;
+        const FVector RandomSpawnLocation = SpawnLocation + RandomOffset;
 
-        APSScaleWithPhysics* NewScale = GetWorld()->SpawnActor<APSScaleWithPhysics>(ScaleWithPhysicsClass, RandomSpawnLocation, FRotator::ZeroRotator);
-        if (NewScale)
+        if (APSScaleWithPhysics* NewScale = GetWorld()->SpawnActor<APSScaleWithPhysics>(ScaleWithPhysicsClass, RandomSpawnLocation, FRotator::ZeroRotator))
         {
             NewScale->SetSelectedFlipBook(CurrentItemType);
             if (ScaleSpawnSound)
@@ -138,11 +136,11 @@ void UPSScoreController::InitializeCachedHUD(APSHUD* HUDtoCache)
 
 float UPSScoreController::GetSpawnRateForItemType(EPickupItemType ItemType) const
 {
-    int32 ItemCount = GetItemPickupCounts().FindRef(ItemType);
+    const int32 ItemCount = GetItemPickupCounts().FindRef(ItemType);
     if (ItemCount <= 0) return 0.0f;
 
     // Calculate spawn interval based on total duration and item count
-    float SpawnInterval = SpawnDuration / static_cast<float>(ItemCount);
+    const float SpawnInterval = SpawnDuration / static_cast<float>(ItemCount);
     return SpawnInterval;
 }
 
@@ -169,7 +167,7 @@ void UPSScoreController::InitializeSound(USoundBase* Sound)
     ScaleSpawnSound = Sound;
 }
 
-int32 UPSScoreController::CalculateScoreForItem(EPickupItemType ItemType) const
+int32 UPSScoreController::CalculateScoreForItem(EPickupItemType ItemType)
 {
     switch (ItemType)
     {

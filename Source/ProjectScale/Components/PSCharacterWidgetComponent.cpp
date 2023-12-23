@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSCharacterWidgetComponent.h"
 #include "ProjectScale/Widgets/PSCharacterWidget.h"
 

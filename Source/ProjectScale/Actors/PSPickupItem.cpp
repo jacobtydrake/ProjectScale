@@ -67,7 +67,7 @@ void APSPickupItem::Tick(float DeltaTime)
 
     // bobbing effect
     FVector NewLocation = GetActorLocation();
-    float DeltaHeight = FMath::Sin(RunningTime * BobSpeed) * BobAmplitude;
+    const float DeltaHeight = FMath::Sin(RunningTime * BobSpeed) * BobAmplitude;
     NewLocation.Z = InitialZ + DeltaHeight;
     RunningTime += DeltaTime;
     SetActorLocation(NewLocation);
@@ -119,7 +119,7 @@ void APSPickupItem::SelectRandomItemType()
         TotalChance += Pair.Value;
     }
 
-    float RandomValue = FMath::RandRange(0.0f, TotalChance);
+    const float RandomValue = FMath::RandRange(0.0f, TotalChance);
     float AccumulatedChance = 0.0f;
 
     for (const auto& Pair : ItemChances)
@@ -175,7 +175,7 @@ void APSPickupItem::SelectRandomItemType()
      PickupFlipbookComp->SetFlipbook(SelectedPickupItem);
 }
 
-void APSPickupItem::EnableCollision()
+void APSPickupItem::EnableCollision() const
 {
     PickupCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
@@ -185,26 +185,25 @@ void APSPickupItem::StartFlashing()
     GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &APSPickupItem::FlashEffect, 0.25f, true);
 }
 
-void APSPickupItem::FlashEffect()
+void APSPickupItem::FlashEffect() const
 {
-    bool bIsVisible = PickupFlipbookComp->IsVisible();
+    const bool bIsVisible = PickupFlipbookComp->IsVisible();
     PickupFlipbookComp->SetVisibility(!bIsVisible);
 }
 
 void APSPickupItem::MoveTowardsCircle(float DeltaTime)
 {
-    FVector CurrentLocation = GetActorLocation();
+    const FVector CurrentLocation = GetActorLocation();
     FVector ToCenter = CircleCenter - CurrentLocation;
     ToCenter.Z = 0;
 
     if (ToCenter.SizeSquared() > FMath::Square(CircleRadius))
     {
-        FVector Direction = ToCenter.GetSafeNormal();
-        FVector NewLocation = CurrentLocation + Direction * MovementSpeedTowardsCircle * DeltaTime;
+        const FVector Direction = ToCenter.GetSafeNormal();
+        const FVector NewLocation = CurrentLocation + Direction * MovementSpeedTowardsCircle * DeltaTime;
         SetActorLocation(NewLocation);
     }
     else
-
     {
         bIsInCircle = true;
     }

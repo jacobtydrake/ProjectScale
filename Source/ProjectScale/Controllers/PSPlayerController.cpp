@@ -1,7 +1,6 @@
 // Written by Jacob Drake - 2023
 
 #include "PSPlayerController.h"
-#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "ProjectScale/PSHUD.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,8 +41,7 @@ void APSPlayerController::BeginPlay()
 		CachedCharacter = Cast<APSCharacter>(FoundCharacters[0]);
 		if (CachedCharacter)
 		{
-			USceneComponent* ListenerComponent = Cast<USceneComponent>(CachedCharacter->GetRootComponent());
-			if (ListenerComponent)
+			if (USceneComponent* ListenerComponent = Cast<USceneComponent>(CachedCharacter->GetRootComponent()))
 			{
 				SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
 			}
@@ -74,7 +72,7 @@ void APSPlayerController::OnPauseButtonPressed()
 	if (IsPaused())
 	{
 		SetPause(false);
-		FInputModeGameOnly InputModeData;
+		const FInputModeGameOnly InputModeData;
 		SetInputMode(InputModeData);
 
 		UGameplayStatics::SetViewportMouseCaptureMode(GetWorld(), EMouseCaptureMode::CaptureDuringMouseDown);
@@ -118,9 +116,9 @@ void APSPlayerController::OnCharacterDeath()
 	if (CachedCharacter)
 	{
 		ReverseEnemyDirections();
-		FVector CharacterLocation = CachedCharacter->GetActorLocation();
-		FVector CameraOffset(-275.0f, 575.0f, 300.0f);
-		FVector CameraLocation = CharacterLocation + CameraOffset;
+		const FVector CharacterLocation = CachedCharacter->GetActorLocation();
+		const FVector CameraOffset(-275.0f, 575.0f, 300.0f);
+		const FVector CameraLocation = CharacterLocation + CameraOffset;
 
 		if (CachedCameraActor)
 		{
@@ -132,8 +130,8 @@ void APSPlayerController::OnCharacterDeath()
 
 	if (PSScoreController && CachedHUD && PSScoreController)
 	{
-		int32 TotalScore = PSScoreController->GetTotalScore();
-		TMap<EPickupItemType, int32> ItemCounts = PSScoreController->GetItemPickupCounts();
+		const int32 TotalScore = PSScoreController->GetTotalScore();
+		const TMap<EPickupItemType, int32> ItemCounts = PSScoreController->GetItemPickupCounts();
 		CachedHUD->SetHUDWidgetVisibility(false);
 		CachedHUD->DisplayScoreScreen(ItemCounts, TotalScore);
 	}
@@ -154,9 +152,9 @@ void APSPlayerController::StartScoreScreenProcess()
 	}
 }
 
-void APSPlayerController::ReverseEnemyDirections()
+void APSPlayerController::ReverseEnemyDirections() const
 {
-	FVector CharacterLocation = CachedCharacter->GetActorLocation();
+	const FVector CharacterLocation = CachedCharacter->GetActorLocation();
 
 	TArray<AActor*> EnemyActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APSEnemy::StaticClass(), EnemyActors);

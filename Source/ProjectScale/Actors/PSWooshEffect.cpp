@@ -20,7 +20,6 @@ APSWooshEffect::APSWooshEffect()
 void APSWooshEffect::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void APSWooshEffect::Tick(float DeltaTime)

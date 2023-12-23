@@ -22,7 +22,7 @@ public:
 	UPSPickupItemWidgetComponent();
 
 
-	void ActivePickupItemWidget(const EPickupItemType ItemType);
+	void ActivePickupItemWidget(const EPickupItemType ItemType) const;
 
 protected:
 

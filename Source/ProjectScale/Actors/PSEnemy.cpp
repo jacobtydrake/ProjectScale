@@ -1,3 +1,4 @@
+// Written by Jacob Drake - 2023
 
 #include "PSEnemy.h"
 #include "Components/CapsuleComponent.h"
@@ -19,8 +20,8 @@ APSEnemy::APSEnemy()
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	RootComponent = CapsuleComp;
 
-	const float CapsuleRadius = 35.0f; 
-	const float CapsuleHalfHeight = 44.0f;
+	constexpr float CapsuleRadius = 35.0f; 
+	constexpr float CapsuleHalfHeight = 44.0f;
 	CapsuleComp->SetCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
 
 	FlipbookComp = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComponent"));
@@ -72,7 +73,7 @@ void APSEnemy::Tick(float DeltaTime)
 		//FVector NewLocation = GetActorLocation() + (MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime);
 		//SetActorLocation(NewLocation);
 
-		FVector Offset = MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime;
+		const FVector Offset = MovementDirection.GetSafeNormal() * MovementSpeed * DeltaTime;
 		AddActorWorldOffset(Offset, true);
 	}
 
@@ -125,8 +126,8 @@ void APSEnemy::Die()
 		DeathEffect->Activate(true);
 	}
 
-	float DelayBeforeSpawn = 0.45f;  // slightly less than the destruction delay
-	float DestructionDelay = 0.5f;
+	constexpr float DelayBeforeSpawn = 0.45f;  // slightly less than the destruction delay
+	constexpr float DestructionDelay = 0.5f;
 
 	// change the collision profile and enable physics
 	CapsuleComp->SetCollisionProfileName(TEXT("RigidBody"));
@@ -135,7 +136,7 @@ void APSEnemy::Die()
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 
-	float LaunchStrength = 1000.0f; // #TODO: make var
+	constexpr float LaunchStrength = 1000.0f; // #TODO: make var
 
 	CapsuleComp->AddImpulse(DamagedLaunchDirection * LaunchStrength, NAME_None, true);
 
@@ -163,7 +164,7 @@ void APSEnemy::UpdateDropChances()
 	CustomDropChances.Add(EPickupItemType::Speed, .80f);
 	CustomDropChances.Add(EPickupItemType::Attack, 0.20f);
 }
-void APSEnemy::SpawnPickupItem()
+void APSEnemy::SpawnPickupItem() const
 {
 	if (PickupItemBlueprint)
 	{
@@ -185,7 +186,7 @@ void APSEnemy::SpawnPickupItem()
 }
 
 
-void APSEnemy::RevertSpriteColor()
+void APSEnemy::RevertSpriteColor() const
 {
 	FlipbookComp->SetSpriteColor(FLinearColor::White);
 }

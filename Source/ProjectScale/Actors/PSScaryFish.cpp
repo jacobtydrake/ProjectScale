@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSScaryFish.h"
 #include "ProjectScale/Actors/PSPickupItem.h"
 #include "Sound/SoundBase.h"
@@ -12,12 +11,12 @@ APSScaryFish::APSScaryFish()
 	MovementSpeed = 90.0f;
 
 	// attack params
-	AttackRange = 850;
+	AttackRange = 800;
 	TotalLaunchDuration = 1.f;
 	AttackHurtDuration = 1.f;
 	AttackToLaunchDelay = 0.5f;
-	TotalAttackDuration = 2.5f;
-	AttackCooldown = 4.0f;
+	TotalAttackDuration = 3.0f;
+	AttackCooldown = 6.0f;
 }
 
 void APSScaryFish::UpdateDropChances()
@@ -32,8 +31,7 @@ void APSScaryFish::StartLaunch()
 	Super::StartLaunch();
 
 	LaunchSoundRepetitions = 4;
-
-	// Clear any existing timer and play the launch sound
+	
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandleLaunchSound);
 	PlayLaunchSound();
 }

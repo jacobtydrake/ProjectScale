@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "PaperCharacter.h"
 #include "ProjectScale/Datatypes/Charactertypes.h"
 #include "ProjectScale/Interfaces/PSCombatInterface.h"
@@ -48,9 +47,9 @@ public:
 	const bool GetPlaySecondAttack() const { return bPlaySecondAttack; }
 
 	UFUNCTION()
-	void OnItemPickup(EPickupItemType ItemType);
+	void OnItemPickup(const EPickupItemType ItemType);
 
-	void RevertSpriteColor();
+	void RevertSpriteColor() const;
 
 protected:
 	/* Overrides */
@@ -59,7 +58,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerIAnputComponent) override;
 
 	/* PSCombatInterface Implementation */
-	virtual void TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection);
+	virtual void TakeDamage_Implementation(const float DamageAmount, const FVector& LaunchDirection) override;
 
 	/* Input Actions */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")

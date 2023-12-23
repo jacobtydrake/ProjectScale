@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PSDamageComponent.generated.h"
 
@@ -27,7 +26,7 @@ public:
 	UFUNCTION()
 	const bool GetIsDamageCollisionActive() const { return bIsDamageCollisionActive;  }
 	UFUNCTION()
-	void SetDamageCollisionSize(const FVector NewSize);
+	void SetDamageCollisionSize(const FVector NewSize) const;
 
 	TObjectPtr<UBoxComponent> GetDamageCollisionBox();
 	UFUNCTION(BlueprintCallable, Category = "Damage")
@@ -60,5 +59,4 @@ private:
 	bool bIsDamageCollisionActive{ false };
 
 	bool bIsRelativePositioningActive{ false };
-		
 };

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "ProjectScale/Actors/PSChasingEnemy.h"
 #include "PSScaryFish.generated.h"
 

@@ -1,6 +1,5 @@
 // Written by Jacob Drake - 2023
 
-
 #include "PSChasingEnemy.h"
 #include "PSCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -8,7 +7,6 @@
 #include "TimerManager.h"
 #include "PSPickupItem.h"
 #include "Sound/SoundBase.h"
-#include "Kismet/GameplayStatics.h"
 
 APSChasingEnemy::APSChasingEnemy()
 {
@@ -51,6 +49,7 @@ void APSChasingEnemy::Die()
     TimerManager->ClearTimer(AttackTimerHandle);
     TimerManager->ClearTimer(LaunchDelayTimerHandle);
     TimerManager->ClearTimer(LaunchTimerHandle);
+    TimerManager->ClearTimer(DamageCollisionTimerHandle);
 }
 
 void APSChasingEnemy::UpdateDropChances()
@@ -133,7 +132,7 @@ void APSChasingEnemy::HandleLaunch()
     }
 }
 
-void APSChasingEnemy::ToggleDamageCollision()
+void APSChasingEnemy::ToggleDamageCollision() const
 {
     if (DamageComp->GetIsDamageCollisionActive())
     {

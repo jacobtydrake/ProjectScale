@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PSCircularEnemySpawner.generated.h"
 
@@ -33,16 +32,16 @@ public:
     bool bIsRowSpawner = false;
 
     UFUNCTION()
-    void SpawnEnemies(const int32 NumberOfEnemies);
+    void SpawnEnemies(const int32 NumberOfEnemies) const;
 
     UFUNCTION()
-    void SpawnSingleEnemy();
+    void SpawnSingleEnemy() const;
 
     UFUNCTION()
     void InitializeSpawnTimer();
 
     UFUNCTION()
-    void SpawnEnemyRow(const int32 NumberOfEnemies, const float Spacing);
+    void SpawnEnemyRow(const int32 NumberOfEnemies, const float Spacing) const;
 
     UPROPERTY(EditAnywhere, Category = "Spawning")
     FVector PlatformCenter { 0, 0, 0 };
@@ -84,7 +83,7 @@ public:
 
     void HandleEnemySpawn();
 
-    float GetSpawnFrequency();
+    float GetSpawnFrequency() const;
 
     UFUNCTION()
     void IncrementNumberOfEnemiesInRow();

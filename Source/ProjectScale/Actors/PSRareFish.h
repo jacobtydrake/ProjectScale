@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "PSEnemy.h"
 #include "PSRareFish.generated.h"
 

@@ -15,6 +15,10 @@ UCLASS()
 class PROJECTSCALE_API UPSGenericButton : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnButtonClickedDelegate);
+	FOnButtonClickedDelegate OnPSButtonClicked;
 	
 protected:
 	/* Overrides */

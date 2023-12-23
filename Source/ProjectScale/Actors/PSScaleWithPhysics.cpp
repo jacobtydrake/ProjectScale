@@ -2,7 +2,6 @@
 
 #include "PSScaleWithPhysics.h"
 #include "PaperFlipbookComponent.h"
-#include "PaperFlipbook.h"
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
 #include "ProjectScale/Actors/PSPickupItem.h"

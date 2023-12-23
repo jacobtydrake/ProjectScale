@@ -1,7 +1,7 @@
+// Written by Jacob Drake - 2023
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "Curves/CurveFloat.h"
 #include "PSEnemyType.generated.h"
@@ -18,5 +18,5 @@ struct FPSEnemyType
     TObjectPtr<UCurveFloat> SpawnCurve;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float BaseSpawnRate;
+    float BaseSpawnRate{ 0.0f };
 };

@@ -65,7 +65,7 @@ void APSAttackingEnemy::PerformAttack()
 	TimerManager->SetTimer(AttackLengthTimerHandle, this, &APSAttackingEnemy::DeactivateDamageCollision, AttackAnimationLength, false);
 }
 
-void APSAttackingEnemy::ActivateDamageCollision()
+void APSAttackingEnemy::ActivateDamageCollision() const
 {
 	DamageComp->ActivateDamageCollision();
 }

@@ -18,7 +18,7 @@ UPSDamageComponent::UPSDamageComponent()
     DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &UPSDamageComponent::OnDamageCollisionOverlap);
 }
 
-void UPSDamageComponent::SetDamageCollisionSize(const FVector NewSize)
+void UPSDamageComponent::SetDamageCollisionSize(const FVector NewSize) const
 {
     DamageCollision->SetBoxExtent(NewSize);
 }

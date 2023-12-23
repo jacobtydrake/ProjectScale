@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "PSScoreController.generated.h"
 
 class APSScaleWithPhysics;
@@ -59,7 +57,7 @@ private:
 
 	TMap<EPickupItemType, int32> ItemPickupCounts;
 
-	int32 CalculateScoreForItem(EPickupItemType ItemType) const;
+	static int32 CalculateScoreForItem(EPickupItemType ItemType);
 
 	TArray<EPickupItemType> ScaleTypesToSpawn;
 
@@ -76,12 +74,10 @@ private:
 	int32 CurrentItemCount;
 	int32 ScalesSpawned;
 	FTimerHandle ScaleSpawnTimerHandle;
-
 	FVector SpawnOffsetRange;
-
 	int32 MaxScalesPerType{ 150 };
 
-	/**/
+	/* cached reference to hud. */
 	TObjectPtr<APSHUD> CachedHUD;
 
 	/* Sound */
