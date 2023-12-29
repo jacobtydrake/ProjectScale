@@ -268,7 +268,7 @@ void APSCharacter::Attack()
 	}
 }
 
-void APSCharacter::ToggleDamageComp(const bool bShouldActiveCollision)
+void APSCharacter::ToggleDamageComp(const bool bShouldActiveCollision) const
 {
 	if (DamageComp)
 	{

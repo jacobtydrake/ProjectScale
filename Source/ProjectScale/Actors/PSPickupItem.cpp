@@ -51,6 +51,7 @@ void APSPickupItem::BeginPlay()
     
     // start flashing based off total lifespan
     GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &APSPickupItem::StartFlashing, Lifespan - FlashTime, false);
+    SetLifeSpan(Lifespan);
 
     if (SceneComp)
     {

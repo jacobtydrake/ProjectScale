@@ -76,7 +76,7 @@ protected:
 	void OnComboAttackRequested(ELastMoveDirection Direction);
 
 	/* Damage Component Control */
-	void ToggleDamageComp(const bool bShouldActiveCollision);
+	void ToggleDamageComp(const bool bShouldActiveCollision) const;
 
 	/* Attack Animation events */
 	UFUNCTION()

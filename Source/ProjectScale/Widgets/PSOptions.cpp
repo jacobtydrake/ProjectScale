@@ -32,7 +32,7 @@ void UPSOptions::NativeConstruct()
 			FString ResString = FString::Printf(TEXT("%dx%d"), Resolution.X, Resolution.Y);
 			ResolutionOptions->AddOption(ResString);
 
-			// Set the current resolution as the selected option
+			// set the current resolution as the selected option
 			if (ResString == CurrentResString)
 			{
 				ResolutionOptions->SetSelectedOption(ResString);
@@ -85,8 +85,6 @@ void UPSOptions::OnApplySettings()
 				int32 ResX = FCString::Atoi(*ResArray[0]);
 				int32 ResY = FCString::Atoi(*ResArray[1]);
 				UserSettings->SetScreenResolution(FIntPoint(ResX, ResY));
-
-				UE_LOG(LogTemp, Warning, TEXT("New Resolution X: %d Y: %d"), ResX, ResY);
 			}
 		}
 
