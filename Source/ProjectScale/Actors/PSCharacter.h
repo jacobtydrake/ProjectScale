@@ -235,4 +235,9 @@ private:
 
 	int32 LastFootstepSoundIndex = -1;
 	FTimerHandle FootstepSoundTimerHandle;
+
+#if WITH_EDITOR
+public:
+	UPSDamageComponent* GetDamageComponent() { return DamageComp; }
+#endif
 };

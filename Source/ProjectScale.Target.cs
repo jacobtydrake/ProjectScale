@@ -11,5 +11,5 @@ public class ProjectScaleTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V4;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 		ExtraModuleNames.Add("ProjectScale");
-	}
+    }
 }
